@@ -1,1 +1,42 @@
 
+#打印sql
+logging:
+  level:
+   com.nuotadi.wms.dao : debug
+spring:
+  #选中生产环境
+  profiles:
+    active: pro
+  #访问的静态资源
+  resources:
+    #,classpath:/templates/ 取消这个路径页面访问
+    static-locations: classpath:/static/,classpath:/templates/
+  #后台返回的页面路径
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false #关闭缓存及时刷新,项目成功发部可为true
+    mode: LEGACYHTML5
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+
+#  通用配置
+# pageHelper分页配置
+pagehelper:
+ helper-dialect: mysql
+ reasonable: true
+ support-methods-arguments: true
+ params: count=countSql
+# 配置文件数据库账户加密key
+jasypt:
+  encryptor:
+    password: panther
+##需引入jar包
+mybatis:
+  #当mybatis的xml文件和mapper接口不在相同包下时，需要用mapperLocations属性指定xml文件的路径。
+  #      *是个通配符，代表所有的文件，**代表所有目录下
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: com.nuotadi.wms.common.entity
+
+
