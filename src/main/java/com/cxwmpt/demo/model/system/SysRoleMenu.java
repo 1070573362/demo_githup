@@ -2,7 +2,7 @@ package com.cxwmpt.demo.model.system;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.nuotadi.model.base.BaseEntity;
+import com.cxwmpt.demo.model.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
