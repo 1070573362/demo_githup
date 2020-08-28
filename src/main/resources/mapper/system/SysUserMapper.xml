@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nuotadi.dao.system.SysUserMapper">
+  <resultMap id="BaseResultMap" type="com.cxwmpt.demo.model.system.SysUser">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="sex" jdbcType="VARCHAR" property="sex" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="companyId" jdbcType="VARCHAR" property="companyId" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="qq" jdbcType="VARCHAR" property="qq" />
+    <result column="wechat" jdbcType="VARCHAR" property="wechat" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="userNo" jdbcType="VARCHAR" property="userNo" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="delFlag" jdbcType="INTEGER" property="delFlag" />
+    <result column="createDate" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="createId" jdbcType="VARCHAR" property="createId" />
+    <result column="updateDate" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="updateId" jdbcType="VARCHAR" property="updateId" />
+  </resultMap>
+
+  <resultMap id="UserMap" type="com.nuotadi.model.system.SysUser">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="sex" jdbcType="VARCHAR" property="sex" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="companyId" jdbcType="VARCHAR" property="companyId" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="qq" jdbcType="VARCHAR" property="qq" />
+    <result column="wechat" jdbcType="VARCHAR" property="wechat" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="userNo" jdbcType="VARCHAR" property="userNo" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="delFlag" jdbcType="INTEGER" property="delFlag" />
+    <result column="createDate" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="createId" jdbcType="VARCHAR" property="createId" />
+    <result column="updateDate" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="updateId" jdbcType="VARCHAR" property="updateId" />
+    <collection property="roleLists"  ofType="com.nuotadi.model.system.SysRole">
+      <result property="id" column="role.id"/>
+      <result property="roleName" column="role.name"/>
+    </collection>
+    <collection property="menus"  ofType="com.nuotadi.model.system.SysMenu">
+      <result property="id" column="menu.id"/>
+      <result property="menuName" column="menu.name"/>
+      <result property="href" column="menu.href"/>
+      <result property="permission" column="menu.permission"/>
+      <result property="icon" column="menu.icon"/>
+      <result property="sort" column="menu.sort"/>
+    </collection>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, account, `password`, username, sex_value as sex, status_value as `status`, company_id as companyId, mobile, qq, wechat, email,
+    userNo, address, remark, delFlag, createDate, createId, updateDate, updateId
+  </sql>
+
+  <select id="selectUserByMap" resultMap="UserMap" parameterType="map">
+        SELECT
+        u.*,
+        m.id 			AS 	"menu.id",
+        m.menu_name			AS	"menu.name",
+        m.permission	AS 	"menu.permission",
+        m.href      	AS 	"menu.href",
+        m.icon          AS  "menu.icon",
+        m.sort          AS  "menu.sort",
+        r.id            AS  "role.id",
+        r.role_name            AS  "role.name"
+        from
+        sys_user u
+        left join sys_user_role  sur  	on  	sur.user_id = u.id
+        left join sys_role r				 	on  	r.id = sur.role_id
+        left join sys_role_menu  srm 	on 	srm.role_id = r.id
+        left join sys_menu  m    		on 	m.id = srm.menu_id
+        where 1 = 1 and u.delFlag = 0 and sur.delFlag = 0 and r.delFlag = 0 and srm.delFlag = 0 and m.delFlag = 0
+        <if test="id != null and id != ''">
+          and u.id = #{id}
+        </if>
+        <if test="account != null and account != ''">
+          and u.account = #{account}
+        </if>
+
+  </select>
+
+
+  <select id="AllList" resultMap="BaseResultMap">
+   select
+   <include refid="Base_Column_List"/>
+    from sys_user LEFT JOIN(SELECT dict.dict_code,dict.dict_value as sex_value FROM dict where  dict.dict_type='sex' )dict  on dict.dict_code=sys_user.sex
+      LEFT JOIN (SELECT dict.dict_code,dict.dict_value as status_value FROM dict where  dict.dict_type='status')dict1 on dict1.dict_code=sys_user.status
+    <where>
+      1=1 and delFlag=false
+      <if test='map.account!=""&amp;&amp; map.account!=null'>
+        and account like concat ('%' , #{map.account} , '%')
+      </if>
+      <if test='map.username!=""&amp;&amp; map.username!=null'>
+        and username like  concat ('%' , #{map.username} , '%')
+      </if>
+      <if test='map.remark!=""&amp;&amp; map.remark!=null'>
+        and remark like concat ('%' , #{map.remark} , '%')
+      </if>
+    </where>
+  </select>
+
+</mapper>
