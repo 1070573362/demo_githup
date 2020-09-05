@@ -1,12 +1,12 @@
 package com.cxwmpt.demo.controller.system;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cxwmpt.demo.common.result.ResultMessage;
+import com.cxwmpt.demo.model.system.SysLog;
+import com.cxwmpt.demo.service.api.system.SysLogService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.nuotadi.common.message.ReturnMessage;
-import com.nuotadi.common.message.ReturnMessageUtil;
-import com.nuotadi.model.system.SysLog;
-import com.nuotadi.service.api.system.SysLogService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,7 +45,7 @@ public class SysLogController {
      */
     @PostMapping("/api/auth/sys/log/list")
     @ResponseBody
-    public ReturnMessage<Object> selectData(@RequestParam Map<String, Object> params) {
+    public ResultMessage<Object> selectData(@RequestParam Map<String, Object> params) {
 
         if (params.containsKey("page") && params.containsKey("limit")) {
             PageHelper.startPage(Integer.parseInt(params.get("page").toString()), Integer.parseInt(params.get("limit").toString()));
@@ -63,7 +63,7 @@ public class SysLogController {
 
         PageInfo<SysLog> info = new PageInfo<>(list);
 
-        return ReturnMessageUtil.sucess(info.getList(), (int)info.getTotal());
+        return ResultMessage.sucess(info.getList(), (int)info.getTotal());
     }
 
     /**
@@ -73,12 +73,12 @@ public class SysLogController {
      */
     @PostMapping("/api/auth/sys/log/delete")
     @ResponseBody
-    public ReturnMessage<Object> delete(@RequestParam("ids[]") List<String> ids) {
+    public ResultMessage<Object> delete(@RequestParam("ids[]") List<String> ids) {
         //删除部门信息
         for (String id : ids) {
             sysLogService.removeById(id);
         }
-        return ReturnMessageUtil.sucess();
+        return ResultMessage.success();
     }
 
 
