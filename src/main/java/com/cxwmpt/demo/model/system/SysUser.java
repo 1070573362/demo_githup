@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -103,12 +104,12 @@ public class SysUser extends BaseEntity<SysUser> implements Serializable {
      * 角色集合
      */
     @TableField(exist=false)
-    private List<SysRole> roleLists = new ArrayList<>();
+    private Set<SysRole> roleLists = new HashSet<SysRole>();
 
     /**
      * 菜单集合
      */
     @TableField(exist=false)
-    private List<SysMenu> menus = new ArrayList<>();
+    private Set<SysMenu> menus= new HashSet<SysMenu>();
 
 }

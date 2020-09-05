@@ -13,12 +13,13 @@ import java.util.Map;
  */
 public interface SysUserService extends IService<SysUser> {
 
+
     List<SysUser> AllList(Map map);
 
     /**
-     * 查询用户信息
-     * @param map
+     * 查询用户信息和权限信息
+     * @param
      * @return
      */
-    SysUser selectUserByMap(Map<String, Object> map);
+    SysUser selectUserByEntity(SysUser loginUser);
 }

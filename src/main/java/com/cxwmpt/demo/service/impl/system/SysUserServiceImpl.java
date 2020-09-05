@@ -23,7 +23,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
-    public SysUser selectUserByMap(Map<String, Object> map) {
-        return sysUserMapper.selectUserByMap(map);
+    public SysUser selectUserByEntity(SysUser loginUser) {
+        return sysUserMapper.selectUserByEntity(loginUser);
     }
 }

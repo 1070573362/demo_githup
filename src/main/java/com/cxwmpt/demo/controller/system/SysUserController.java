@@ -1,24 +1,24 @@
 package com.cxwmpt.demo.controller.system;
 
 
-import com.alibaba.fastjson.JSONObject;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.cxwmpt.demo.annotation.SysLog;
+import com.cxwmpt.demo.common.result.CodeEnum;
+import com.cxwmpt.demo.common.result.ResultMessage;
+import com.cxwmpt.demo.common.util.MD5Util;
+import com.cxwmpt.demo.model.system.SysMenu;
+import com.cxwmpt.demo.model.system.SysRole;
+import com.cxwmpt.demo.model.system.SysUser;
+import com.cxwmpt.demo.model.system.SysUserRole;
+import com.cxwmpt.demo.service.api.system.SysUserRoleService;
+import com.cxwmpt.demo.service.api.system.SysUserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.google.common.collect.Sets;
-import com.nuotadi.base.AccountUser;
-import com.nuotadi.common.enums.CodeEnum;
-import com.nuotadi.common.message.ReturnMessage;
-import com.nuotadi.common.message.ReturnMessageUtil;
-import com.nuotadi.common.utils.MD5Util;
-import com.nuotadi.common.utils.RedisKey;
-import com.nuotadi.model.system.*;
-import com.nuotadi.service.api.system.SysUserRoleService;
-import com.nuotadi.service.api.system.SysUserService;
-import com.nuotadi.system.SysLog;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -107,23 +107,23 @@ public class SysUserController {
     @RequestMapping("/api/auth/user/pageList")
     @ResponseBody
     @SysLog("分页查询用户管理信息")
-    public ReturnMessage pageList(@RequestParam Map map) {
+    public ResultMessage pageList(@RequestParam Map map) {
         if (map.containsKey("page") && map.containsKey("limit")) {
             PageHelper.startPage(Integer.parseInt(map.get("page").toString()), Integer.parseInt(map.get("limit").toString())).setOrderBy("createDate desc ");
         }
         //判断是否有分页数据传过来
         List<SysUser> list = sysUserService.AllList(map);
         PageInfo<SysUser> info = new PageInfo<>(list);
-        return ReturnMessageUtil.sucess(info.getList(), (int)info.getTotal());
+        return ResultMessage.success("获取分页数据成功",info.getList(),info.getPageNum(), (int)info.getTotal());
     }
 
     @RequestMapping("/api/auth/user/AllList")
     @ResponseBody
     @SysLog("查询用户管理信息")
-    public ReturnMessage AllList(@RequestParam Map map) {
+    public ResultMessage AllList(@RequestParam Map map) {
         //判断是否有分页数据传过来
         List<SysUser> list = sysUserService.AllList(map);
-        return ReturnMessageUtil.sucess(list);
+        return ResultMessage.success(list);
     }
 
 
@@ -132,27 +132,22 @@ public class SysUserController {
     @RequestMapping("/api/auth/user/delete")
     @ResponseBody
     @SysLog("删除用户信息")
-    public ReturnMessage delete(@RequestParam("ids[]") List<String> ids) {
-        if (ids.size() <= 0) {
-            return ReturnMessageUtil.error(-1, "没有获取到删除的数据");
-        }
+    public ResultMessage delete(@RequestParam("ids[]") List<String> ids) {
         for (String data : ids) {
-            redisTemplate.delete(RedisKey.getPermissionKey(data));
             sysUserService.removeById(data);
             QueryWrapper<SysUserRole> wrapper = new QueryWrapper<>();
             wrapper.eq("user_id", data);
             wrapper.eq("delFlag", false);
             sysUserRoleService.remove(wrapper);
         }
-        return ReturnMessageUtil.sucess();
+        return ResultMessage.success("删除数据成功");
     }
 
 
     @RequestMapping("/api/auth/user/save")
     @ResponseBody
     @SysLog("保存用户信息")
-    @RequiresPermissions("sys:user:add")
-    public ReturnMessage save(@RequestParam("form") String form, @RequestParam("ArrayIds") String ArrayIds, HttpServletRequest request) {
+    public ResultMessage save(@RequestParam("form") String form, @RequestParam("ArrayIds") String ArrayIds, HttpServletRequest request) {
         SysUser sysUser = JSONObject.parseObject(form, SysUser.class);
         List<String> array = JSONObject.parseArray(ArrayIds, String.class);
         String userId = AccountUser.accountUser(request);

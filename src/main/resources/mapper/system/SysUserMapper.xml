@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.nuotadi.dao.system.SysUserMapper">
+<mapper namespace="com.cxwmpt.demo.dao.system.SysUserMapper">
   <resultMap id="BaseResultMap" type="com.cxwmpt.demo.model.system.SysUser">
     <!--
       WARNING - @mbg.generated
@@ -26,7 +26,7 @@
     <result column="updateId" jdbcType="VARCHAR" property="updateId" />
   </resultMap>
 
-  <resultMap id="UserMap" type="com.nuotadi.model.system.SysUser">
+  <resultMap id="UserMap" type="com.cxwmpt.demo.model.system.SysUser">
     <!--
       WARNING - @mbg.generated
     -->
@@ -49,11 +49,11 @@
     <result column="createId" jdbcType="VARCHAR" property="createId" />
     <result column="updateDate" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="updateId" jdbcType="VARCHAR" property="updateId" />
-    <collection property="roleLists"  ofType="com.nuotadi.model.system.SysRole">
+    <collection property="roleLists"  ofType="com.cxwmpt.demo.model.system.SysRole">
       <result property="id" column="role.id"/>
       <result property="roleName" column="role.name"/>
     </collection>
-    <collection property="menus"  ofType="com.nuotadi.model.system.SysMenu">
+    <collection property="menus"  ofType="com.cxwmpt.demo.model.system.SysMenu">
       <result property="id" column="menu.id"/>
       <result property="menuName" column="menu.name"/>
       <result property="href" column="menu.href"/>
@@ -70,8 +70,8 @@
     id, account, `password`, username, sex_value as sex, status_value as `status`, company_id as companyId, mobile, qq, wechat, email,
     userNo, address, remark, delFlag, createDate, createId, updateDate, updateId
   </sql>
-
-  <select id="selectUserByMap" resultMap="UserMap" parameterType="map">
+   <!-- parameterType="com.cxwmpt.demo.model.system.SysUser"-->
+  <select id="selectUserByEntity" resultMap="UserMap" >
         SELECT
         u.*,
         m.id 			AS 	"menu.id",
@@ -89,13 +89,9 @@
         left join sys_role_menu  srm 	on 	srm.role_id = r.id
         left join sys_menu  m    		on 	m.id = srm.menu_id
         where 1 = 1 and u.delFlag = 0 and sur.delFlag = 0 and r.delFlag = 0 and srm.delFlag = 0 and m.delFlag = 0
-        <if test="id != null and id != ''">
-          and u.id = #{id}
+        <if test="loginUser.id != null and loginUser.id != ''">
+          and u.id = #{loginUser.id}
         </if>
-        <if test="account != null and account != ''">
-          and u.account = #{account}
-        </if>
-
   </select>
 
 

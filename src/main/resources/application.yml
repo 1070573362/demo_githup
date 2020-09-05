@@ -6,7 +6,7 @@ logging:
 spring:
   #选中生产环境
   profiles:
-    active: pro
+    active: dev
   #访问的静态资源
   resources:
     #,classpath:/templates/ 取消这个路径页面访问

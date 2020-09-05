@@ -21,7 +21,7 @@ public class ResultMessage<T> implements Serializable {
     private Integer count;
 
     /**
-     * 全部的
+     * 全部的数据长度
      */
     private Integer total;
 

@@ -1,44 +1,32 @@
 package com.cxwmpt.demo.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.google.common.collect.Sets;
-import com.nuotadi.base.AccountUser;
-import com.nuotadi.common.enums.CodeEnum;
-import com.nuotadi.common.exception.ApiException;
-import com.nuotadi.common.message.ReturnMessage;
-import com.nuotadi.common.message.ReturnMessageUtil;
-import com.nuotadi.common.utils.JWTUtil;
-import com.nuotadi.common.utils.MD5Util;
-import com.nuotadi.common.utils.RedisKey;
-import com.nuotadi.model.system.SysMenu;
-import com.nuotadi.model.system.SysRole;
-import com.nuotadi.model.system.SysUser;
-import com.nuotadi.service.api.system.SysMenuService;
-import com.nuotadi.service.api.system.SysUserService;
-import com.nuotadi.system.SysLog;
-import org.apache.commons.lang3.StringUtils;
+
+import com.cxwmpt.demo.annotation.SysLog;
+import com.cxwmpt.demo.common.result.ResultMessage;
+import com.cxwmpt.demo.common.util.AesUtil;
+import com.cxwmpt.demo.common.util.MD5Util;
+import com.cxwmpt.demo.model.system.SysUser;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
-import static com.nuotadi.common.utils.AesUtil.aesDecrypt;
-
+import static com.cxwmpt.demo.common.util.AesUtil.aesDecrypt;
+import static org.apache.shiro.SecurityUtils.getSubject;
 
 /**
  * <p>
@@ -49,146 +37,90 @@ import static com.nuotadi.common.utils.AesUtil.aesDecrypt;
  */
 
 @Controller
-public class AccountController  {
+public class AccountController {
 
-    @Autowired
-    private SysUserService sysUserService;
-
-    @Autowired
-    private SysMenuService sysMenuService;
-
-    @Autowired
-    private RedisTemplate redisTemplate;
 
     /**
      * 跳转到登录页
      * @return
      */
-    @GetMapping("html/login")
+    @GetMapping("/login")
     public String login() {
         return "login";
     }
 
-    @GetMapping("html/index")
+    @GetMapping("/index")
     public String index() {
+        SysUser loginUser = (SysUser) getSubject().getPrincipal();
+        if(loginUser==null){
+            return "login";
+        }
         return "index";
     }
 
 
-    @PostMapping("/api/_login")
-    @ResponseBody
-    public ReturnMessage<Object> _login(String userName, String password, boolean remember, String calibrationBit, HttpServletResponse response) throws UnsupportedEncodingException {
-        String name = aesDecrypt(userName);
-        String pswd = aesDecrypt(password);
-        //带有中文md5加密
-        if (!MD5Util.md5( URLEncoder.encode(userName + password, "utf-8")).equals(calibrationBit)) {
-            System.out.println("检验位错误");
-        }
-
-        Subject subject = SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(name, MD5Util.md5(pswd));
-        try {
-            //主体提交登录请求到SecurityManager
-            subject.login(token);
-        } catch (UnknownAccountException e) {
-            return ReturnMessageUtil.error(CodeEnum.USER_IS_NULL);
-        }
-        return ReturnMessageUtil.sucess();
-    }
-
-
-    @PostMapping("auth")
+    @PostMapping("/api/auth/account/_login")
     @ResponseBody
     @SysLog("用户登录")
-    public ReturnMessage<Object> login(String userName, String password , String calibrationBit, HttpServletResponse response) throws UnsupportedEncodingException {
+    public ResultMessage _login(String userName, String password, boolean remember, HttpServletResponse response) throws UnsupportedEncodingException {
 
         String name = aesDecrypt(userName);
         String pswd = aesDecrypt(password);
-        //带有中文md5加密
-        if (!MD5Util.md5( URLEncoder.encode(userName + password, "utf-8")).equals(calibrationBit)) {
-            System.out.println("检验位错误");
-        }
-        //查询用户信息
-        QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
-        wrapper.eq("account", name);
-        wrapper.eq("delFlag", 0);
-        SysUser user = sysUserService.getOne(wrapper);
-        //用户不存在
-        if (user == null) {
-            throw new ApiException(CodeEnum.USER_IS_NULL);
-        }
-        //密码错误
-        if (!user.getPassword().equals(MD5Util.md5(pswd))) {
-            throw new ApiException(CodeEnum.PASSWORD_ERROR);
-        }
+        Subject subject = SecurityUtils.getSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(name, MD5Util.md5(pswd));
+        //这边还接收吗异常吗 不用了
+            //主体提交登录请求到SecurityManager
+        subject.login(token);
 
-        String token = JWTUtil.generatorToken(user.getId(),
-                name,
-                24*60*60*1000L);
-
-        return ReturnMessageUtil.sucess(token);
+        return ResultMessage.success();
     }
-
-    @GetMapping("/api/auth/isLogin")
+    /**
+     * 获取当前登录人信息
+     * @param
+     * @return
+     */
+    @RequestMapping("/api/auth/account/getLoginInfo")
     @ResponseBody
-    public ReturnMessage<Object> isLogin() {
-
-        return ReturnMessageUtil.sucess("用户已登录");
-
+    public ResultMessage getLoginInfo() {
+        SysUser loginUser = (SysUser) getSubject().getPrincipal();
+        return ResultMessage.success(loginUser);
     }
-    @SysLog("用户退出")
-    @GetMapping("/api/auth/account/logout")
-    public String logout(){
-        SecurityUtils.getSubject().logout();
-        return "redirect:/login";
+    /**
+     * 退出
+     *
+     * @return BJR without data
+     */
+    @RequestMapping("/api/auth/account/_logout")
+   @ResponseBody
+    public  ResultMessage _logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Subject subject = getSubject();
+        subject.logout(); // session 会销毁，在SessionListener监听session销毁，清理权限缓存
+        return ResultMessage.success();
     }
-    @SysLog("获取当前登录的用户信息")
-    @GetMapping("/api/auth/account/getLoginInfo")
-    public ReturnMessage getLoginInfo(HttpServletRequest request){
-        String userId = AccountUser.accountUser(request);
-        QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
-        wrapper.eq("account", userId);
-        wrapper.eq("delFlag", false);
-        SysUser sysUser = sysUserService.getOne(wrapper);
-        //用户不存在
-        if (sysUser == null) {
-            return ReturnMessageUtil.error(CodeEnum.USER_IS_NULL);
-        }
-        return ReturnMessageUtil.sucess(sysUser);
+    @RequestMapping("/html/account/home")
+    public String home(Model model) {
+            SysUser loginUser = (SysUser) getSubject().getPrincipal();
+
+        return "html/home";
     }
 
-    @PostMapping("/api/auth/isPermission")
-    @ResponseBody
-    public ReturnMessage isPermission(HttpServletRequest request){
-        String userId = AccountUser.accountUser(request);
-        SysUser us = sysUserService.getById(userId);
-        //从缓存中获取授权信息
-        Boolean flag = redisTemplate.hasKey(RedisKey.getPermissionKey(us.getId()));
-        if (flag) {
-            return ReturnMessageUtil.sucess(redisTemplate.opsForHash().get(RedisKey.getPermissionKey(us.getId()),"permissions"));
-        }
-        Map<String, Object> param = new HashMap<>();
-        param.put("id", us.getId());
-        param.put("account", us.getAccount());
-        SysUser user = sysUserService.selectUserByMap(param);
-        Set<SysRole> roles = user.getRoleLists();
-        Set<String> roleNames = Sets.newHashSet();
-        for (SysRole role : roles) {
-            if(StringUtils.isNotBlank(role.getRoleName())){
-                roleNames.add(role.getRoleName());
-            }
-        }
-        Set<SysMenu> menus = user.getMenus();
-        Set<String> permissions = Sets.newHashSet();
-        for (SysMenu menu : menus) {
-            if(StringUtils.isNotBlank(menu.getPermission())){
-                permissions.add(menu.getPermission());
-            }
-        }
-
-        redisTemplate.opsForHash().put(RedisKey.getPermissionKey(user.getId()), "roles", roleNames);
-        redisTemplate.opsForHash().put(RedisKey.getPermissionKey(user.getId()), "permissions", permissions);
-
-        return ReturnMessageUtil.sucess(permissions);
+    /**
+     * 修改密码
+     * @param model
+     * @return
+     */
+    @RequestMapping("/html/changePassword")
+    public String changePassword(Model model) {
+        return "html/changePassword";
     }
+    /**
+     * 忘记密码
+     * @param model
+     * @return
+     */
+    @RequestMapping("/html/ForgetPassword")
+    public String ForgetPassword(Model model) {
+        return "html/ForgetPassword";
+    }
+
 }
