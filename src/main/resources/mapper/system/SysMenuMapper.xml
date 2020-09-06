@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.nuotadi.dao.system.SysMenuMapper">
+<mapper namespace="com.cxwmpt.demo.dao.system.SysMenuMapper">
     <resultMap id="BaseResultMap" type="com.cxwmpt.demo.model.system.SysMenu">
         <!--@Table sys_menu-->
         <id column="id" jdbcType="VARCHAR" property="id"/>
@@ -67,7 +67,7 @@
 
 
 
-    <select id="listLoginInfoMenu" resultType="com.nuotadi.common.vo.Node">
+    <select id="listLoginInfoMenu" resultType="com.cxwmpt.demo.common.vo.Node">
         SELECT
         <include refid="listLoginInfoMenu_columns"/>
         FROM sys_menu where id in(SELECT  sys_menu.id from(SELECT sys_role_menu.menu_id from (SELECT sys_user_role.role_id from (SELECT id FROM sys_user where id=#{id} and delFlag=false )sys_user

@@ -12,7 +12,7 @@ public enum CodeEnum {
 
     PARAMISNULL(4000,"请求参数为空"),
 
-    USERISNULL(4001,"用户不存在"),
+    USER_IS_NULL(4001,"用户不存在"),
 
     PASSWORDERROR(4002,"密码不正确"),
 

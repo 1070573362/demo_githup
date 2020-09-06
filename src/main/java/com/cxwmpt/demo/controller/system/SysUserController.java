@@ -2,10 +2,12 @@ package com.cxwmpt.demo.controller.system;
 
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+
 import com.cxwmpt.demo.annotation.SysLog;
 import com.cxwmpt.demo.common.result.CodeEnum;
+import com.cxwmpt.demo.common.result.ResultCodeEnum;
 import com.cxwmpt.demo.common.result.ResultMessage;
 import com.cxwmpt.demo.common.util.MD5Util;
 import com.cxwmpt.demo.model.system.SysMenu;
@@ -17,8 +19,9 @@ import com.cxwmpt.demo.service.api.system.SysUserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static org.apache.shiro.SecurityUtils.getSubject;
 
 @Controller
 public class SysUserController {
@@ -147,10 +152,11 @@ public class SysUserController {
     @RequestMapping("/api/auth/user/save")
     @ResponseBody
     @SysLog("保存用户信息")
-    public ResultMessage save(@RequestParam("form") String form, @RequestParam("ArrayIds") String ArrayIds, HttpServletRequest request) {
+    public ResultMessage save(@RequestParam("form") String form, @RequestParam("ArrayIds") String ArrayIds) {
         SysUser sysUser = JSONObject.parseObject(form, SysUser.class);
         List<String> array = JSONObject.parseArray(ArrayIds, String.class);
-        String userId = AccountUser.accountUser(request);
+        //获取登录人信息
+        SysUser loginUser = (SysUser) getSubject().getPrincipal();
         //查询有没有重复的字段
         QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
         wrapper.eq("account", sysUser.getAccount());
@@ -164,10 +170,10 @@ public class SysUserController {
 
             if (!sysUser.getAccount().equals(old.getAccount())) {
                 if (count != 0) {
-                    return ReturnMessageUtil.error(-1, "对不起，你修改的用户登录帐号重复，请重新创建");
+                    return ResultMessage.error(-1, "对不起，你修改的用户登录帐号重复，请重新创建");
                 }
             }
-            sysUser.setUpdateId(userId);
+            sysUser.setUpdateId(loginUser.getId());
             if(sysUser.getPassword()!=null&&sysUser.getPassword()!=""){
                 sysUser.setPassword(MD5Util.md5(sysUser.getPassword()));
             }else {
@@ -183,53 +189,30 @@ public class SysUserController {
                     SysUserRole sysUserRole = new SysUserRole();
                     sysUserRole.setUserId(sysUser.getId());
                     sysUserRole.setRoleId(data);
-                    sysUserRole.setCreateId(userId);
+                    sysUserRole.setCreateId(loginUser.getId());
                     sysUserRoleService.save(sysUserRole);
                 }
-
-                Map<String, Object> param = new HashMap<>();
-                param.put("id", sysUser.getId());
-                param.put("account", sysUser.getAccount());
-                SysUser user = sysUserService.selectUserByMap(param);
-                Set<SysRole> roles = user.getRoleLists();
-                Set<String> roleNames = Sets.newHashSet();
-                for (SysRole role : roles) {
-                    if(StringUtils.isNotBlank(role.getRoleName())){
-                        roleNames.add(role.getRoleName());
-                    }
-                }
-                Set<SysMenu> menus = user.getMenus();
-                Set<String> permissions = Sets.newHashSet();
-                for (SysMenu menu : menus) {
-                    if(StringUtils.isNotBlank(menu.getPermission())){
-                        permissions.add(menu.getPermission());
-                    }
-                }
-
-                redisTemplate.opsForHash().put(RedisKey.getPermissionKey(user.getAccount()), "roles", roleNames);
-                redisTemplate.opsForHash().put(RedisKey.getPermissionKey(user.getAccount()), "permissions", permissions);
-
-                return ReturnMessageUtil.sucess();
+                return ResultMessage.success();
             }
-            return ReturnMessageUtil.error(-1, "修改数据失败");
+            return ResultMessage.error(-1, "修改数据失败");
         } else {
             //新增
             if (count != 0) {
-                return ReturnMessageUtil.error(-1, "对不起，你创建的用户登录帐号重复，请重新创建");
+                return ResultMessage.error(-1, "对不起，你创建的用户登录帐号重复，请重新创建");
             }
             sysUser.setPassword(MD5Util.md5(sysUser.getPassword()));
-            sysUser.setCreateId(userId);
+            sysUser.setCreateId(loginUser.getId());
             if (sysUserService.save(sysUser)) {
                 for (String data : array) {
                     SysUserRole sysUserRole = new SysUserRole();
                     sysUserRole.setUserId(sysUser.getId());
                     sysUserRole.setRoleId(data);
-                    sysUserRole.setCreateId(userId);
+                    sysUserRole.setCreateId(loginUser.getId());
                     sysUserRoleService.save(sysUserRole);
                 }
-                return ReturnMessageUtil.sucess();
+                return ResultMessage.success();
             }
-            return ReturnMessageUtil.error(-1, "新增数据失败");
+            return ResultMessage.error(-1, "新增数据失败");
         }
     }
 
@@ -240,26 +223,27 @@ public class SysUserController {
     @RequestMapping("/api/auth/user/saveNewPassword")
     @ResponseBody
     @SysLog("密码重置")
-    public ReturnMessage saveNewPassword(String oldPassword, String newPassword, HttpServletRequest request){
-        String userId = AccountUser.accountUser(request);
+    public ResultMessage saveNewPassword(String oldPassword, String newPassword){
+        //获取登录人信息
+        SysUser loginUser = (SysUser) getSubject().getPrincipal();
         QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
-        wrapper.eq("id", userId);
+        wrapper.eq("id", loginUser.getId());
         wrapper.eq("delFlag", 0);
         SysUser sysUser = sysUserService.getOne(wrapper);
         if (sysUser == null) {
-            return ReturnMessageUtil.error(CodeEnum.USER_IS_NULL);
+            return ResultMessage.error(ResultCodeEnum.USER_IS_NULL);
         }
         //md5比较
         if (!sysUser.getPassword().equals(MD5Util.md5(oldPassword))) {
-            return ReturnMessageUtil.error(-1,"您的旧密码和原数据库内容不一样，请重新输入");
+            return ResultMessage.error(ResultCodeEnum.OLD_PASSWORD_NOT_NEW_PASSWORD);
         }
         sysUser.setPassword(MD5Util.md5(newPassword));
         //修改密码成功返回修改后的数据
-        sysUser.setUpdateId(userId);
+        sysUser.setUpdateId(loginUser.getId());
         if (sysUserService.updateById(sysUser)) {
-            return  ReturnMessageUtil.sucess();
+            return  ResultMessage.success();
         }
-        return ReturnMessageUtil.error(-1,"修改密码失败");
+        return ResultMessage.error(ResultCodeEnum.UPDATE_PASSWORD_ERROR);
     }
 
 }

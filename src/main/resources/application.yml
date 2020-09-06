@@ -32,11 +32,6 @@ pagehelper:
 jasypt:
   encryptor:
     password: panther
-##需引入jar包
-mybatis:
-  #当mybatis的xml文件和mapper接口不在相同包下时，需要用mapperLocations属性指定xml文件的路径。
-  #      *是个通配符，代表所有的文件，**代表所有目录下
-  mapper-locations: classpath:mappers/*.xml
-  type-aliases-package: com.nuotadi.wms.common.entity
+
 
 

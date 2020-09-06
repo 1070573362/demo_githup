@@ -1,13 +1,14 @@
 package com.cxwmpt.demo.controller.system;
 
 
-import com.nuotadi.base.AccountUser;
-import com.nuotadi.common.message.ReturnMessage;
-import com.nuotadi.common.message.ReturnMessageUtil;
-import com.nuotadi.common.vo.Node;
-import com.nuotadi.model.system.SysMenu;
-import com.nuotadi.service.api.system.SysMenuService;
-import com.nuotadi.system.SysLog;
+
+import com.cxwmpt.demo.annotation.SysLog;
+import com.cxwmpt.demo.common.result.ResultCodeEnum;
+import com.cxwmpt.demo.common.result.ResultMessage;
+import com.cxwmpt.demo.common.vo.Node;
+import com.cxwmpt.demo.model.system.SysMenu;
+import com.cxwmpt.demo.model.system.SysUser;
+import com.cxwmpt.demo.service.api.system.SysMenuService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.shiro.SecurityUtils.getSubject;
 
 
 @Controller
@@ -68,10 +71,11 @@ public class SystemMenuController {
      */
     @RequestMapping("/api/auth/menu/listLoginInfoMenu")
     @ResponseBody
-    public   ReturnMessage listLoginInfoMenu(HttpServletRequest request) {
-        String userId = AccountUser.accountUser(request);
-        List<Node> sysMenuList=sysMenuService.listLoginInfoMenu(userId);
-        return  ReturnMessageUtil.sucess(sysMenuList);
+    public ResultMessage listLoginInfoMenu(HttpServletRequest request) {
+        //获取登录人信息
+        SysUser loginUser = (SysUser) getSubject().getPrincipal();
+        List<Node> sysMenuList=sysMenuService.listLoginInfoMenu(loginUser.getId());
+        return  ResultMessage.success(sysMenuList);
     }
 
     /**
@@ -81,9 +85,9 @@ public class SystemMenuController {
     @RequestMapping("/api/auth/menu/getDTreeList")
     @ResponseBody
     @SysLog("查询所有菜单信息")
-    public  ReturnMessage getDTreeList() {
+    public  ResultMessage getDTreeList() {
         List<Map> list=sysMenuService.getDTreeList();
-        return  ReturnMessageUtil.sucess(list,list.size());
+        return  ResultMessage.success("查询所有菜单信息",list);
     }
 //
 //
@@ -95,11 +99,10 @@ public class SystemMenuController {
     @PostMapping("/api/auth/menu/listTreeTable")
     @ResponseBody
     @SysLog("查询所有菜单信息")
-    public ReturnMessage listTreeTable(HttpServletRequest request) {
-        String userId = AccountUser.accountUser(request);
+    public ResultMessage listTreeTable() {
 
         List<SysMenu> list= sysMenuService.listTreeTable();
-        return ReturnMessageUtil.sucess(list,list.size());
+        return ResultMessage.success("查询所有菜单信息",list);
     }
 
 
@@ -111,15 +114,15 @@ public class SystemMenuController {
     @RequestMapping("/api/auth/menu/delete")
     @ResponseBody
     @SysLog("删除菜单信息")
-    public ReturnMessage delete(String id) {
+    public ResultMessage delete(String id) {
         List<String> sysMentId=sysMenuService.getByIDSelectSubNode(id);
         if(!sysMenuService.removeById(id)){
-            return ReturnMessageUtil.error(-1,"删除数据失败");
+            return ResultMessage.error(ResultCodeEnum.DELETE_DATE_ERROR);
         }
         for (String data :sysMentId) {
            sysMenuService.removeById(data);
         }
-        return ReturnMessageUtil.sucess();
+        return ResultMessage.success();
     }
     /**
      * 新增和修改
@@ -130,9 +133,9 @@ public class SystemMenuController {
     @RequestMapping("/api/auth/menu/save")
     @ResponseBody
     @SysLog("保存菜单信息")
-    public ReturnMessage save(SysMenu sysMenu, HttpServletRequest request) {
-
-        String userId = AccountUser.accountUser(request);
+    public ResultMessage save(SysMenu sysMenu) {
+        //获取登录人信息
+        SysUser loginUser = (SysUser) getSubject().getPrincipal();
         if (("").equals(sysMenu.getParentId()) || sysMenu.getParentId() == null) {
             sysMenu.setParentId(0+"");
         }
@@ -140,21 +143,21 @@ public class SystemMenuController {
         if (sysMenu.getId() != null&&sysMenu.getId().length()>0) {
             //修改
            if(sysMenu.getId().equals(sysMenu.getParentId())){
-               return ReturnMessageUtil.error(-1,"请不要选中自身作为父节点");
+               return ResultMessage.error(-1,"请不要选中自身作为父节点");
            }
-            sysMenu.setUpdateId(userId);
+            sysMenu.setUpdateId(loginUser.getId());
             if (sysMenuService.updateById(sysMenu)) {
-                return ReturnMessageUtil.sucess();
+                return ResultMessage.success();
             }
-            return ReturnMessageUtil.error(-1,"修改数据失败");
+            return ResultMessage.error(ResultCodeEnum.UPDATE_DATE_ERROR);
         } else {
             //新增
-            sysMenu.setCreateId(userId);
+            sysMenu.setCreateId(loginUser.getId());
             if(sysMenuService.save(sysMenu)){
                 System.out.println(sysMenu.getId());
-                return ReturnMessageUtil.sucess();
+                return ResultMessage.success();
             }
-            return  ReturnMessageUtil.error(-1,"新增数据失败");
+            return  ResultMessage.error(ResultCodeEnum.ADD_DATE_ERROR);
         }
     }
 
@@ -168,11 +171,11 @@ public class SystemMenuController {
     @RequestMapping("/api/auth/menu/listFromPid")
     @ResponseBody
     @SysLog("查询菜单父节点信息")
-    public  ReturnMessage listFromPid(@RequestParam("parentId") String parentId) {
+    public  ResultMessage listFromPid(@RequestParam("parentId") String parentId) {
         SysMenu sysMenu=sysMenuService.getById(parentId);
          if(sysMenu==null){
-             return ReturnMessageUtil.error(-1,"根据pid获取数据为空");
+             return ResultMessage.error(-1,"根据pid获取数据为空");
          }
-        return ReturnMessageUtil.sucess(sysMenu);
+        return ResultMessage.success(sysMenu);
     }
 }

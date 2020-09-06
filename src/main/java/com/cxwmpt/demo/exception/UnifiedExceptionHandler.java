@@ -2,7 +2,7 @@ package com.cxwmpt.demo.exception;
 
 
 
-import com.nuotadi.lhwts.common.result.ResultMessage;
+import com.cxwmpt.demo.common.result.ResultMessage;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;

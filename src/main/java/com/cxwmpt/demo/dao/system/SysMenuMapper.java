@@ -2,6 +2,7 @@ package com.cxwmpt.demo.dao.system;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cxwmpt.demo.common.vo.Node;
 import com.cxwmpt.demo.model.system.SysMenu;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

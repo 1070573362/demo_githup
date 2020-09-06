@@ -1,9 +1,10 @@
 package com.cxwmpt.demo.annotation;
 
 import com.alibaba.fastjson.JSONObject;
-import com.nuotadi.lhwts.common.util.IpUtil;
-import com.nuotadi.lhwts.common.util.ToolUtil;
-import com.nuotadi.lhwts.service.general.SysLogService;
+
+import com.cxwmpt.demo.common.util.IpUtil;
+import com.cxwmpt.demo.common.util.ToolUtil;
+import com.cxwmpt.demo.service.api.system.SysLogService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -35,9 +36,9 @@ public class SysLogAspect {
     @Autowired
     private SysLogService sysLogService;
 
-    private com.nuotadi.lhwts.model.entity.SysLog sysLog = null;
+    private com.cxwmpt.demo.model.system.SysLog sysLog = null;
 
-    @Pointcut("@annotation(com.nuotadi.lhwts.annotation.SysLog)")
+    @Pointcut("@annotation(com.cxwmpt.demo.annotation.SysLog )")
     public void webLog(){}
 
     @Before("webLog()")
@@ -47,7 +48,7 @@ public class SysLogAspect {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
-        sysLog = new com.nuotadi.lhwts.model.entity.SysLog();
+        sysLog = new com.cxwmpt.demo.model.system.SysLog();
         sysLog.setClassMethod(joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
         sysLog.setHttpMethod(request.getMethod());
         //获取传入目标方法的参数
@@ -109,7 +110,7 @@ public class SysLogAspect {
         String retString = JSONObject.toJSONString(ret);
         sysLog.setResponse(retString.length()>5000? JSONObject.toJSONString("请求参数数据过长不与显示"):retString);
         sysLog.setUseTime(System.currentTimeMillis() - startTime.get());
-        sysLogService.saveNotEmpty(sysLog);
+        sysLogService.save(sysLog);
     }
 
 }

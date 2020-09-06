@@ -29,12 +29,20 @@ public enum  ResultCodeEnum {
 
     UPDATE_NOTNULL_DATE_ERROR(606,"编辑不为空的数据错误"),
 
-    INSERT_NOTNULL_DATE_ERROR(606,"添加不为空的数据错误"),
+    INSERT_NOTNULL_DATE_ERROR(607,"添加不为空的数据错误"),
+
+    DELETE_DATE_ERROR(608,"删除数据失败"),
+
+    ADD_DATE_ERROR(609,"添加数据失败"),
+
+    UPDATE_DATE_ERROR(610,"修改数据失败"),
     /*** 用户 1000-1999***/
 
     USER_IS_NULL(1000,"用户不存在"),
 
     PASSWORD_ERROR(2001,"密码不正确"),
+
+    UPDATE_PASSWORD_ERROR(2002,"密码修改失败"),
 
     STATUS_ERROR(3002,"用户状态异常"),
 

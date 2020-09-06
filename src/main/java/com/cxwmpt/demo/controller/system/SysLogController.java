@@ -63,7 +63,7 @@ public class SysLogController {
 
         PageInfo<SysLog> info = new PageInfo<>(list);
 
-        return ResultMessage.sucess(info.getList(), (int)info.getTotal());
+        return ResultMessage.success("获取分页数据成功",info.getList(),info.getPageNum(), (int)info.getTotal());
     }
 
     /**

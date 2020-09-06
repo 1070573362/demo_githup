@@ -3,19 +3,19 @@ package com.cxwmpt.demo.controller.system;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cxwmpt.demo.annotation.SysLog;
+import com.cxwmpt.demo.common.result.ResultCodeEnum;
+import com.cxwmpt.demo.common.result.ResultMessage;
+import com.cxwmpt.demo.model.system.SysRole;
+import com.cxwmpt.demo.model.system.SysRoleMenu;
+import com.cxwmpt.demo.model.system.SysUser;
+import com.cxwmpt.demo.model.system.SysUserRole;
+import com.cxwmpt.demo.service.api.system.SysRoleMenuService;
+import com.cxwmpt.demo.service.api.system.SysRoleService;
+import com.cxwmpt.demo.service.api.system.SysUserRoleService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.nuotadi.base.AccountUser;
-import com.nuotadi.common.message.ReturnMessage;
-import com.nuotadi.common.message.ReturnMessageUtil;
-import com.nuotadi.common.utils.RedisKey;
-import com.nuotadi.model.system.SysRole;
-import com.nuotadi.model.system.SysRoleMenu;
-import com.nuotadi.model.system.SysUserRole;
-import com.nuotadi.service.api.system.SysRoleMenuService;
-import com.nuotadi.service.api.system.SysRoleService;
-import com.nuotadi.service.api.system.SysUserRoleService;
-import com.nuotadi.system.SysLog;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.shiro.SecurityUtils.getSubject;
 
 @Controller
 public class SysRoleController {
@@ -88,33 +90,31 @@ public class SysRoleController {
     @RequestMapping("/api/auth/role/pageList")
     @ResponseBody
     @SysLog("分页查询角色管理的信息")
-    public ReturnMessage pageList(@RequestParam Map map) {
+    public ResultMessage pageList(@RequestParam Map map) {
         if (map.containsKey("page") && map.containsKey("limit")) {
             PageHelper.startPage(Integer.parseInt(map.get("page").toString()), Integer.parseInt(map.get("limit").toString())).setOrderBy("createDate desc ");
         }
         //判断是否有分页数据传过来
         List<SysRole> list = sysRoleService.AllList(map);
         PageInfo<SysRole> info = new PageInfo<>(list);
-        return ReturnMessageUtil.sucess(info.getList(), (int)info.getTotal());
+        return ResultMessage.success("获取分页数据成功",info.getList(),info.getPageNum(), (int)info.getTotal());
+
 
     }
     @RequestMapping("/api/auth/role/AllList")
     @ResponseBody
     @SysLog("查询角色管理的信息")
-    public ReturnMessage AllList(@RequestParam Map map) {
+    public ResultMessage AllList(@RequestParam Map map) {
         //判断是否有分页数据传过来
         List<SysRole> list = sysRoleService.AllList(map);
-        return ReturnMessageUtil.sucess(list);
+        return ResultMessage.success(list);
     }
 
 
     @RequestMapping("/api/auth/role/delete")
     @ResponseBody
     @SysLog("删除角色信息")
-    public ReturnMessage delete(@RequestParam("ids[]") List<String> ids) {
-        if (ids.size() <= 0) {
-            return ReturnMessageUtil.error(-1, "没有获取到删除的数据");
-        }
+    public ResultMessage delete(@RequestParam("ids[]") List<String> ids) {
         for (String data : ids) {
             sysRoleService.removeById(data);
             QueryWrapper<SysRoleMenu> wrapper = new QueryWrapper<>();
@@ -122,7 +122,7 @@ public class SysRoleController {
             wrapper.eq("delFlag", false);
             sysRoleMenuService.remove(wrapper);
         }
-        return ReturnMessageUtil.sucess();
+        return ResultMessage.success();
     }
 
 
@@ -130,10 +130,11 @@ public class SysRoleController {
     @RequestMapping("/api/auth/role/save")
     @ResponseBody
     @SysLog("保存角色信息")
-    public ReturnMessage save(@RequestParam("form") String form, @RequestParam("ArrayIds") String ArrayIds, HttpServletRequest request) {
+    public ResultMessage save(@RequestParam("form") String form, @RequestParam("ArrayIds") String ArrayIds, HttpServletRequest request) {
         SysRole sysRole = JSONObject.parseObject(form, SysRole.class);
         List<String> array = JSONObject.parseArray(ArrayIds, String.class);
-        String userId = AccountUser.accountUser(request);
+        //获取登录人信息
+        SysUser loginUser = (SysUser) getSubject().getPrincipal();
         //查询有没有重复的字段
         QueryWrapper<SysRole> wrapper = new QueryWrapper<>();
         wrapper.eq("role_name", sysRole.getRoleName());
@@ -147,10 +148,10 @@ public class SysRoleController {
 
             if (!sysRole.getRoleName().equals(old.getRoleName())) {
                 if (count != 0) {
-                    return ReturnMessageUtil.error(-1, "对不起，你修改的角色重复，请重新创建");
+                    return ResultMessage.error(-1, "对不起，你修改的角色重复，请重新创建");
                 }
             }
-            sysRole.setUpdateId(userId);
+            sysRole.setUpdateId(loginUser.getId());
             if (sysRoleService.updateById(sysRole)) {
                 //删除原来权限
                 QueryWrapper<SysRoleMenu> wrapper1 = new QueryWrapper<>();
@@ -161,38 +162,30 @@ public class SysRoleController {
                     SysRoleMenu sysRoleMenu = new SysRoleMenu();
                     sysRoleMenu.setRoleId(sysRole.getId());
                     sysRoleMenu.setMenuId(data);
-                    sysRoleMenu.setCreateId(userId);
+                    sysRoleMenu.setCreateId(loginUser.getId());
                     sysRoleMenuService.save(sysRoleMenu);
                 }
-                //移除Redis中所有对应此权限的用户
-                List<SysUserRole> list = sysUserRoleService.list(new QueryWrapper<SysUserRole>().eq("role_id", sysRole.getId()).eq("delFlag", 0));
-                list.stream().forEach((us)->{
-                    us.getUserId();
-                    redisTemplate.delete(RedisKey.getPermissionKey(us.getUserId()));
-                });
-
-
-                return ReturnMessageUtil.sucess();
+                return ResultMessage.success();
             }
-            return ReturnMessageUtil.error(-1, "修改数据失败");
+            return ResultMessage.error(ResultCodeEnum.UPDATE_DATE_ERROR);
         } else {
             //新增
             if (count != 0) {
-                return ReturnMessageUtil.error(-1, "对不起，你创建的角色名重复，请重新创建");
+                return ResultMessage.error(-1, "对不起，你创建的角色名重复，请重新创建");
             }
 
-            sysRole.setCreateId(userId);
+            sysRole.setCreateId(loginUser.getId());
             if (sysRoleService.save(sysRole)) {
                 for (String data : array) {
                     SysRoleMenu sysRoleMenu = new SysRoleMenu();
                     sysRoleMenu.setRoleId(sysRole.getId());
                     sysRoleMenu.setMenuId(data);
-                    sysRoleMenu.setCreateId(userId);
+                    sysRoleMenu.setCreateId(loginUser.getId());
                     sysRoleMenuService.save(sysRoleMenu);
                 }
-                return ReturnMessageUtil.sucess();
+                return ResultMessage.success();
             }
-            return ReturnMessageUtil.error(-1, "新增数据失败");
+            return ResultMessage.error(ResultCodeEnum.ADD_DATE_ERROR);
         }
     }
 
