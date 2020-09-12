@@ -398,8 +398,9 @@ var  Util = {
     },
     //递归生成左侧菜单栏
 
+    //递归生成左侧菜单栏
     traverseLayuiMenuBar: function (res) {
-        console.log(res)
+        console.log(res);
         let content = '';
         $.each(res, function (i, obj) {
             content += '<li  data-name="" class="layui-nav-item">';
@@ -418,6 +419,7 @@ var  Util = {
 
         //组装子菜单的方法
         function loadchild(obj) {
+
             if (obj == null) {
                 return;
             }

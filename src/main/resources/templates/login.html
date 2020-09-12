@@ -69,7 +69,7 @@
             let calibrationBit = Encrypation.md5(userName + password);
             //请求登入接口
             $.ajax({
-                url: apiUrl.account.auth,
+                url: apiUrl.account.login,
                 dataType: 'json',
                 type: 'post',
                 async: false,//同步
@@ -78,9 +78,9 @@
                 success: function (res) {
                     // console.log(res)
                     // debugger
-                    if (res.code === 0) {
+                    if (res.status==true&&res.code == 200) {
                         layer.msg("登录成功", {time: 1000}, function () {
-                             window.location.href = '/html/index';
+                             window.location.href = '/index';
                         });
                     } else {
                         layer.msg(res.message, {time: 1000}, function () {

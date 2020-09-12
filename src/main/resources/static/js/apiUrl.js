@@ -9,6 +9,7 @@ const apiUrl = {
         uploadImg: API_BASE_URL + '/sys/uploadImg',//图片上传
     },
     account: {
+        login: API_BASE_URL + '/api/auth/account/_login',//登录
         auth: API_BASE_URL + '/auth',//获取token
         isLogin: API_BASE_URL + '/api/auth/isLogin',//检验是否登陆
         isPermission: API_BASE_URL + '/api/auth/isPermission',

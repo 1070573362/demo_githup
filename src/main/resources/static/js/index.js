@@ -4,20 +4,26 @@ $(function () {
         let layer = layui.layer
             , element = layui.element;
         let loadIndex = layer.load(2);
-
-        let ajaxrequire = {
-            _urls: apiUrl.menu.listLoginInfoMenu,
-            _method: 'post',
-            _dataType: 'json'
-        };
-        $createAjax(ajaxrequire, function (res) {
+        $.post(apiUrl.menu.listLoginInfoMenu, function(res){
             layer.close(loadIndex);
-            if (res.code === 0) {
+            if (res.code === 200&&res.status===true){
                 $("#LAY-system-side-menu").append(Util.traverseLayuiMenuBar(res.data));
                 element.render('nav');
-
             }
         });
+        // let ajaxrequire = {
+        //     _urls: apiUrl.menu.listLoginInfoMenu,
+        //     _method: 'post',
+        //     _dataType: 'json'
+        // };
+        // $createAjax(ajaxrequire, function (res) {
+        //     layer.close(loadIndex);
+        //     if (res.code === 0) {
+        //         $("#LAY-system-side-menu").append(Util.traverseLayuiMenuBar(res.data));
+        //         element.render('nav');
+        //
+        //     }
+        // });
 
 
 

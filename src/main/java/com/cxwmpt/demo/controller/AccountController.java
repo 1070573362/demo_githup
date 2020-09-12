@@ -62,7 +62,7 @@ public class AccountController {
     @PostMapping("/api/auth/account/_login")
     @ResponseBody
     @SysLog("用户登录")
-    public ResultMessage _login(String userName, String password, boolean remember, HttpServletResponse response) throws UnsupportedEncodingException {
+    public ResultMessage _login(String userName, String password, boolean remember) throws UnsupportedEncodingException {
 
         String name = aesDecrypt(userName);
         String pswd = aesDecrypt(password);
@@ -101,7 +101,7 @@ public class AccountController {
     public String home(Model model) {
             SysUser loginUser = (SysUser) getSubject().getPrincipal();
 
-        return "html/home";
+        return "home";
     }
 
     /**
