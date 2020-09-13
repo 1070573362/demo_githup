@@ -92,7 +92,7 @@ public class SysRoleController {
     @SysLog("分页查询角色管理的信息")
     public ResultMessage pageList(@RequestParam Map map) {
         if (map.containsKey("page") && map.containsKey("limit")) {
-            PageHelper.startPage(Integer.parseInt(map.get("page").toString()), Integer.parseInt(map.get("limit").toString())).setOrderBy("createDate desc ");
+            PageHelper.startPage(Integer.parseInt(map.get("page").toString()), Integer.parseInt(map.get("limit").toString()));
         }
         //判断是否有分页数据传过来
         List<SysRole> list = sysRoleService.AllList(map);

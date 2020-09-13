@@ -113,14 +113,14 @@ public class CustomRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         //查询拥有的菜单权限角色权限
         SysUser user = sysUserService.selectUserByEntity(loginUser);
-        Set<SysRole> roles = loginUser.getRoleLists();
+        Set<SysRole>  roles = user.getRoleLists();
         Set<String> roleNames = new HashSet<String>();
         for (SysRole role : roles) {
             if(StringUtils.isNotBlank(role.getRoleName())){
                 roleNames.add(role.getRoleName());
             }
         }
-        Set<SysMenu> menus = loginUser.getMenus();
+        Set<SysMenu> menus = user.getMenus();
         Set<String> permissions =new HashSet<String>();
         for (SysMenu menu : menus) {
             if(StringUtils.isNotBlank(menu.getPermission())){
