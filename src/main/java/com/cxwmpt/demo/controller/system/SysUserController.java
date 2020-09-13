@@ -54,10 +54,10 @@ public class SysUserController {
      *
      * @return
      */
-    @RequestMapping("/html/user/page")
+    @RequestMapping("/html/system/user/page")
     @SysLog("打开用户管理窗口")
     public String page() {
-        return "html/systemSetup/userCenter/user/Page";
+        return "systemSetup/userCenter/user/Page";
     }
 
     /**
@@ -119,7 +119,7 @@ public class SysUserController {
         //判断是否有分页数据传过来
         List<SysUser> list = sysUserService.AllList(map);
         PageInfo<SysUser> info = new PageInfo<>(list);
-        return ResultMessage.success("获取分页数据成功",info.getList(),info.getPageNum(), (int)info.getTotal());
+        return ResultMessage.success(info);
     }
 
     @RequestMapping("/api/auth/user/AllList")

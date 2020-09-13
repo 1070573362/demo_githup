@@ -29,4 +29,6 @@ public interface SysMenuService extends IService<SysMenu> {
     List<Node> listLoginInfoMenu(String id);
 
     List<String> ListPermissionFromUserId(String id);
+
+    List<SysMenu> getListById(Map map);
 }

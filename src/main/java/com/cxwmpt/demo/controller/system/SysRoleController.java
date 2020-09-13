@@ -47,10 +47,10 @@ public class SysRoleController {
      *
      * @return
      */
-    @RequestMapping("html/role/page")
+    @RequestMapping("html/system/role/page")
     @SysLog("打开角色管理窗口")
     public String page() {
-        return "html/systemSetup/userCenter/role/Page";
+        return "systemSetup/userCenter/role/Page";
     }
     @RequestMapping("html/role/addPage")
     public String addPage() {
@@ -97,7 +97,7 @@ public class SysRoleController {
         //判断是否有分页数据传过来
         List<SysRole> list = sysRoleService.AllList(map);
         PageInfo<SysRole> info = new PageInfo<>(list);
-        return ResultMessage.success("获取分页数据成功",info.getList(),info.getPageNum(), (int)info.getTotal());
+        return ResultMessage.success(info);
 
 
     }

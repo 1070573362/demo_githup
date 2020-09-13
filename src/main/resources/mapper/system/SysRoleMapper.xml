@@ -13,13 +13,12 @@
     <result column="updateDate" jdbcType="TIMESTAMP" property="updateDate" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, role_name, status_value as `status`, remark, createId, createDate, updateId, updateDate
+    id, role_name, status as `status`, remark, createId, createDate, updateId, updateDate
   </sql>
     <select id="AllList" resultMap="BaseResultMap">
       SELECT
       <include refid="Base_Column_List"/>
       FROM sys_role
-      LEFT JOIN (SELECT dict.dict_code,dict.dict_value as status_value FROM dict where  dict.dict_type='status')dict1 on dict1.dict_code=sys_role.status
       <where>
       1=1 and delFlag=false
       <if test='map.roleName!=""&amp;&amp; map.roleName!=null'>
@@ -29,5 +28,6 @@
         and remark like concat ('%' , #{map.remark} , '%')
       </if>
     </where>
+      order by createDate desc
     </select>
 </mapper>

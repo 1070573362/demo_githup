@@ -67,7 +67,7 @@
     <!--
       WARNING - @mbg.generated
     -->
-    id, account, `password`, username, sex_value as sex, status_value as `status`, company_id as companyId, mobile, qq, wechat, email,
+    id, account, `password`, username, sex as sex, status as `status`, company_id as companyId, mobile, qq, wechat, email,
     userNo, address, remark, delFlag, createDate, createId, updateDate, updateId
   </sql>
    <!-- parameterType="com.cxwmpt.demo.model.system.SysUser"-->
@@ -98,9 +98,8 @@
   <select id="AllList" resultMap="BaseResultMap">
    select
    <include refid="Base_Column_List"/>
-    from sys_user LEFT JOIN(SELECT dict.dict_code,dict.dict_value as sex_value FROM dict where  dict.dict_type='sex' )dict  on dict.dict_code=sys_user.sex
-      LEFT JOIN (SELECT dict.dict_code,dict.dict_value as status_value FROM dict where  dict.dict_type='status')dict1 on dict1.dict_code=sys_user.status
-    <where>
+    from sys_user
+     <where>
       1=1 and delFlag=false
       <if test='map.account!=""&amp;&amp; map.account!=null'>
         and account like concat ('%' , #{map.account} , '%')

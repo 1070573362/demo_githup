@@ -98,22 +98,29 @@
             form = layui.form,
             layer = layui.layer;
         reloadTable(null);
-
         function reloadTable(data) {
-            let loadIndex = layer.load(2);
-            $.post(apiUrl.user.getAllList, data, function (res) {
-                if (res.code !== 0&&res.status===false) return;
-                layer.close(loadIndex);
                 table.render({
                     elem: '#dataTable',//唯一ID
                     id: 'dataList',//数据表格的id
                     toolbar: '#addBar',//头部操作栏id
                     size: 0,//表格大小
-                    data: res.data, //数据或接口
+                    url: apiUrl.user.pageList,
+                    method: 'post',
                     page: true, //开启分页
                     limits: [10, 20, 30],
                     limit: 10, //每页默认显示的数量
                     height: 'full-75', //高度最大化减去差值
+                    where: data,
+                    parseData: function (res) {
+                        //console.log(res)
+                        //res 即为原始返回的数据
+                        return {
+                            "code": 0, //解析接口状态
+                            "msg": 0, //解析提示文本
+                            "count": res.data.total, //解析数据长度
+                            "data": res.data.list //解析数据列表
+                        };
+                    },
                     cols: [
                         [ //表头
                             {type: 'checkbox', fixed: 'left'},
@@ -169,8 +176,6 @@
                         ]
                     ]
                 });
-            })
-
         }
 
         //监听查询提交

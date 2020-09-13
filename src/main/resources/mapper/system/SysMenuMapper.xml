@@ -84,4 +84,23 @@
      LEFT JOIN (SELECT * FROM sys_role_menu where delFlag=false)sys_role_menu  on sys_role_menu.role_id=sys.role_id  group by sys_role_menu.menu_id)sys
      LEFT JOIN (select * FROM sys_menu where delFlag=false)sys_menu on sys_menu.id=sys.menu_id
     </select>
+    <select id="getListById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_menu
+        <where>
+            1 = 1 and  delFlag=false
+            <if test='map.id!=""&amp;&amp; map.id!=null'>
+                and id IN (SELECT id FROM (
+                SELECT t1.*,
+                IF(FIND_IN_SET(parent_id, @pids) > 0, @pids := CONCAT(@pids, ',', id), 0) AS ischild
+                FROM (
+                SELECT * FROM sys_menu where delFlag=false
+                ) t1,
+                (SELECT @pids := #{map.id})t2
+                ) t3 WHERE ischild != '0')
+            </if>
+        </where>
+        order by sort asc ,createDate desc
+    </select>
 </mapper>

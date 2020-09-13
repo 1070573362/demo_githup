@@ -30,4 +30,6 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
     List<Node> listLoginInfoMenu(@Param("id") String id);
 
     List<String> ListPermissionFromUserId(@Param("id") String id);
+
+    List<SysMenu> getListById(@Param("map")Map map);
 }

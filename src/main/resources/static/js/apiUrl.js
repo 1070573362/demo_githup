@@ -47,6 +47,7 @@ const apiUrl = {
         listFromPid: API_BASE_URL + '/api/auth/menu/listFromPid',//根据pid对象查询，返回一个对象
         iconList: API_BASE_URL + '/html/menu/icon',//跳转图标页面
         listLoginInfoMenu: API_BASE_URL + '/api/auth/menu/listLoginInfoMenu',//显示登录人拥有的权限菜单
+        getListById: API_BASE_URL + '/api/auth/menu/getListById',//根据id获取所有子节点
 
     },
     company: {

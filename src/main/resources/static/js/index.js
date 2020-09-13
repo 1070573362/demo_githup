@@ -6,10 +6,10 @@ $(function () {
         let loadIndex = layer.load(2);
         $.post(apiUrl.menu.listLoginInfoMenu, function(res){
             layer.close(loadIndex);
-            if (res.code === 200&&res.status===true){
+            if (res.code !== 200 && res.status === false) return;
                 $("#LAY-system-side-menu").append(Util.traverseLayuiMenuBar(res.data));
                 element.render('nav');
-            }
+
         });
         // let ajaxrequire = {
         //     _urls: apiUrl.menu.listLoginInfoMenu,

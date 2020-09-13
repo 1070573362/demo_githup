@@ -9,6 +9,8 @@ import com.cxwmpt.demo.common.vo.Node;
 import com.cxwmpt.demo.model.system.SysMenu;
 import com.cxwmpt.demo.model.system.SysUser;
 import com.cxwmpt.demo.service.api.system.SysMenuService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,10 +35,10 @@ public class SystemMenuController {
      * @return
      */
 
-    @RequestMapping("html/menu/page")
+    @RequestMapping("html/system/menu/page")
     @SysLog("打开菜单管理窗口")
     public String page() {
-        return "html/systemSetup/userCenter/menu/Page";
+        return "systemSetup/userCenter/menu/Page";
     }
 
     /**
@@ -71,7 +73,7 @@ public class SystemMenuController {
      */
     @RequestMapping("/api/auth/menu/listLoginInfoMenu")
     @ResponseBody
-    public ResultMessage listLoginInfoMenu(HttpServletRequest request) {
+    public ResultMessage listLoginInfoMenu() {
         //获取登录人信息
         SysUser loginUser = (SysUser) getSubject().getPrincipal();
         List<Node> sysMenuList=sysMenuService.listLoginInfoMenu(loginUser.getId());
@@ -105,7 +107,20 @@ public class SystemMenuController {
         return ResultMessage.success("查询所有菜单信息",list);
     }
 
-
+    /**
+     * 根据pid下面的所有子节点(菜单界面使用)
+     * orderby
+     */
+    @PostMapping("/api/auth/menu/getListById")
+    @ResponseBody
+    public ResultMessage getListByPid(@RequestParam Map map) {
+        if (map.containsKey("page") && map.containsKey("limit")) {
+            PageHelper.startPage(Integer.parseInt(map.get("page").toString()), Integer.parseInt(map.get("limit").toString()));
+        }
+        List<SysMenu> list = sysMenuService.getListById(map);
+        PageInfo<SysUser> info = new PageInfo(list);
+        return ResultMessage.success(info);
+    }
     /***
      * 删除自己和子节点
      * @param id

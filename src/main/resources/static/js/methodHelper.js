@@ -400,7 +400,7 @@ var  Util = {
 
     //递归生成左侧菜单栏
     traverseLayuiMenuBar: function (res) {
-        console.log(res);
+       // console.log(res);
         let content = '';
         $.each(res, function (i, obj) {
             content += '<li  data-name="" class="layui-nav-item">';

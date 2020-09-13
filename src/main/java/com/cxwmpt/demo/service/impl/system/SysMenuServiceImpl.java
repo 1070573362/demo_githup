@@ -59,4 +59,9 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         }
         return sysMenuList;
     }
+
+    @Override
+    public List<SysMenu> getListById(Map map) {
+        return sysMenuMapper.getListById(map);
+    }
 }
