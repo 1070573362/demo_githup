@@ -28,12 +28,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <!--mybatis相关依赖-->
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>2.1.0</version>
-        </dependency>
+        <!--mybatis相关依赖（引入mybatis-plue可以去掉这个依赖)-->
+<!--        <dependency>-->
+<!--            <groupId>org.mybatis.spring.boot</groupId>-->
+<!--            <artifactId>mybatis-spring-boot-starter</artifactId>-->
+<!--            <version>2.1.0</version>-->
+<!--        </dependency>-->
         <!--数据库依赖-->
         <dependency>
             <groupId>mysql</groupId>
@@ -52,12 +52,7 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--lombok依赖添加-->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
+        <!--单元测试-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -79,8 +74,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
-
-
         <!--mybatis-plus-->
         <dependency>
             <groupId>com.baomidou</groupId>
