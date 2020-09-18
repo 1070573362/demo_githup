@@ -98,7 +98,7 @@
                 SELECT * FROM sys_menu where delFlag=false
                 ) t1,
                 (SELECT @pids := #{map.id})t2
-                ) t3 WHERE ischild != '0')
+                ) t3 WHERE ischild != '0') or id = #{map.id}
             </if>
         </where>
         order by sort asc ,createDate desc

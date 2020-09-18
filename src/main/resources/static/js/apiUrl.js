@@ -37,15 +37,17 @@ const apiUrl = {
         delete: API_BASE_URL + '/api/auth/role/delete',//删除和批量删除
     },
     menu: {
+        iconList: API_BASE_URL + '/html/menu/icon',//跳转图标页面
         addPage: API_BASE_URL + '/html/menu/addPage',//新增页面
         updatePage: API_BASE_URL + '/html/menu/updatePage',//修改页面
 
         listTreeTable: API_BASE_URL + '/api/auth/menu/listTreeTable',//显示tree数据表格
         save: API_BASE_URL + '/api/auth/menu/save',//新增和修改
-        delete: API_BASE_URL + '/api/auth/menu/delete',//删除和批量删除
+        delete: API_BASE_URL + '/api/auth/menu/delete',//删除
+        deletes: API_BASE_URL + '/api/auth/menu/deletes',//批量删除
         getDTreeList: API_BASE_URL + '/api/auth/menu/getDTreeList',//获取dtree需要的data数据
         listFromPid: API_BASE_URL + '/api/auth/menu/listFromPid',//根据pid对象查询，返回一个对象
-        iconList: API_BASE_URL + '/html/menu/icon',//跳转图标页面
+
         listLoginInfoMenu: API_BASE_URL + '/api/auth/menu/listLoginInfoMenu',//显示登录人拥有的权限菜单
         getListById: API_BASE_URL + '/api/auth/menu/getListById',//根据id获取所有子节点
 

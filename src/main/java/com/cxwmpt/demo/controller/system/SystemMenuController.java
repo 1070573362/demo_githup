@@ -48,23 +48,28 @@ public class SystemMenuController {
     @GetMapping("html/menu/icon")
     @SysLog("打开图标窗口")
     public String icon() {
-        return "html/systemSetup/userCenter/menu/icon";
+        return "systemSetup/userCenter/menu/icon";
     }
 
+
     @RequestMapping("/html/menu/addPage")
-    public String addPage() {
-        return "html/systemSetup/userCenter/menu/Add";
+    public String addPage(Model model,String parentId) {
+        SysMenu sysMenu =new SysMenu();
+        sysMenu.setParentId(parentId);
+        model.addAttribute("entity",sysMenu);
+        return "systemSetup/userCenter/menu/Add";
     }
+
 
     @RequestMapping("/html/menu/updatePage")
     @SysLog("打开菜单管理的新增或修改窗口")
     public String updatePage(Model model, String id, String action) {
         model.addAttribute("action", action);
         if (StringUtils.isNotBlank(id)) {
-            SysMenu menu = sysMenuService.getById(id);
-            model.addAttribute("Entity", menu);
+            SysMenu sysMenu = sysMenuService.getById(id);
+            model.addAttribute("entity", sysMenu);
         }
-        return "html/systemSetup/userCenter/menu/Update";
+        return "systemSetup/userCenter/menu/Update";
     }
 
 
@@ -83,7 +88,6 @@ public class SystemMenuController {
     /**
      * dTreeList的数据
      */
-
     @RequestMapping("/api/auth/menu/getDTreeList")
     @ResponseBody
     @SysLog("查询所有菜单信息")
@@ -91,9 +95,7 @@ public class SystemMenuController {
         List<Map> list=sysMenuService.getDTreeList();
         return  ResultMessage.success("查询所有菜单信息",list);
     }
-//
-//
-//
+
     /**
      * 菜单列表treeTable数据
      * orderby
@@ -108,7 +110,7 @@ public class SystemMenuController {
     }
 
     /**
-     * 根据pid下面的所有子节点(菜单界面使用)
+     * 根据pid下面的所有子节点包含自己(菜单界面使用)
      * orderby
      */
     @PostMapping("/api/auth/menu/getListById")
@@ -136,6 +138,27 @@ public class SystemMenuController {
         }
         for (String data :sysMentId) {
            sysMenuService.removeById(data);
+        }
+        return ResultMessage.success();
+    }
+    /***
+     * 删除自己和子节点
+     * @param ids
+     * @return
+     */
+    @RequestMapping("/api/auth/menu/deletes")
+    @ResponseBody
+    @SysLog("删除菜单信息")
+    public ResultMessage delete(@RequestParam("ids[]") List<String> ids) {
+        if (ids.size() <= 0) {
+            return ResultMessage.error(ResultCodeEnum.OPERATION_DATA_IS_NULL);
+        }
+        for (String data : ids) {
+            List<String> sysMentId = sysMenuService.getByIDSelectSubNode(data);
+            sysMenuService.removeById(data);
+            for (String data1 : sysMentId) {
+                sysMenuService.removeById(data1);
+            }
         }
         return ResultMessage.success();
     }

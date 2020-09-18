@@ -47,7 +47,12 @@
                                             <i class='layui-icon layui-icon-delete'></i>删除
                                         </button>
                                     </shiro:hasPermission>
-
+                                    <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="details">
+                                        <i class='layui-icon layui-icon-read'></i>详情
+                                    </button>
+                                    <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="refresh">
+                                        <i class='layui-icon layui-icon-refresh'></i>刷新
+                                    </button>
                                 </div>
                             </script>
                             <table id="dataTable" lay-filter="dataTable"></table> <!--数据表格-->
@@ -56,7 +61,6 @@
                 </div>
             </div>
         </div>
-
         <script>
             layui.config({
                 base: '/layuiadmin/module/dtree/' //配置 layui 第三方扩展组件存放的基础目录
@@ -69,16 +73,6 @@
                     , layer = layui.layer;
 
                 let selectNodeId = "";
-
-                $.post(apiUrl.menu.getDTreeList, {type: "0"}, function (res) {
-                    if (res.code !== 200 && res.status === false) return;
-                    dtree.render({
-                        elem: "#dTreeMenu",
-                        data: res.data,
-                        dataFormat: "list",  //配置data的风格为list
-                        checkbar: false //开启复选框
-                    });
-                });
                 // 点击节点名称获取选中节点值
                 dtree.on("node('dTreeMenu')", function (obj) {
                     selectNodeId = obj.param.nodeId;
@@ -87,7 +81,15 @@
                 });
                 reloadTable(null);
                 function reloadTable(data) {
-
+                    $.post(apiUrl.menu.getDTreeList, {type: "0"}, function (res) {
+                        if (res.code !== 200) return;
+                        dtree.render({
+                            elem: "#dTreeMenu",
+                            data: res.data,
+                            dataFormat: "list",  //配置data的风格为list
+                            checkbar: false //开启复选框
+                        });
+                    });
                     table.render({
                         elem: '#dataTable',//唯一ID
                         id: 'dataList',//数据表格的id
@@ -102,21 +104,21 @@
                         where: data,
                         parseData: function (res) {
                             //console.log(res)
-                        //res 即为原始返回的数据
-                        return {
-                            "code": 0, //解析接口状态
-                            "msg": 0, //解析提示文本
-                            "count": res.data.total, //解析数据长度
-                            "data": res.data.list //解析数据列表
-                           };
-                          },
+                            //res 即为原始返回的数据
+                            return {
+                                "code": 0, //解析接口状态
+                                "msg": 0, //解析提示文本
+                                "count": res.data.total, //解析数据长度
+                                "data": res.data.list //解析数据列表
+                            };
+                        },
                         cols: [
                             [ //表头
                                 {type: 'checkbox', fixed: 'left'},
                                 {unresize: true, fixed: 'left', title: '序号', type: 'numbers', width: 70},
-                                {field: 'id', title: 'ID', width: 70, sort: true, fixed: 'left', hide: false},
-                                {field: 'menuCode', title: '菜单编号', width: 120},
-                                {field: 'menuName', title: '菜单名称', width: 120},
+                                {field: 'id', title: 'ID', width: 70, sort: true, fixed: 'left', hide: true},
+                                {field: 'menuCode', title: '菜单编号', width: 120, sort: true, fixed: 'left'},
+                                {field: 'menuName', title: '菜单名称', width: 160},
                                 {field: 'href', title: '连接地址', width: 160},
                                 {field: 'permission', title: '权限标识', width: 160},
                                 {field: 'sort', title: '排序', width: 120},
@@ -154,7 +156,7 @@
                             layer.open({
                                 type: 2,//1是div 2是html
                                 title: '新增信息',
-                                content: apiUrl.menu.operatePage + '?action=save&parentId=' + selectNodeId,
+                                content: apiUrl.menu.addPage + '?parentId=' + selectNodeId,
                                 shade: [0.9, '#393D49'],
                                 area: ['100%', '100%'],
                                 closeBtn: 1,//不显示则closeBtn: 0
@@ -175,12 +177,11 @@
                             } else if (data.length > 1) {
                                 layer.alert('只能选择一条数据进行编辑', {icon: 2});
                             } else {
-
                                 arr[0] = data[0].id;
                                 layer.open({
                                     type: 2,
                                     title: '修改管理员信息',
-                                    content: apiUrl.menu.operatePage + '?action=save&id=' + arr[0],
+                                    content: apiUrl.menu.updatePage + '?action=edit&id=' + arr[0],
                                     area: ['100%', '100%'],
                                     // , offset: '10px'
                                     closeBtn: 1,//不显示则closeBtn: 0
@@ -207,8 +208,8 @@
                                 }
                                 layer.confirm('您确定要删除条菜单包括他的子菜单吗？', function (index) {
                                     let loadIndex = layer.load(2);
-                                    $.post(apiUrl.menu.delete, {ids: arr}, function (res) {
-                                        if (res.code === 200 && res.status === true) {
+                                    $.post(apiUrl.menu.deletes, {ids: arr}, function (res) {
+                                        if (res.code === 200) {
                                             layer.msg("操作成功", {icon: 6});
                                             layer.close(loadIndex);
                                             reloadTable();
@@ -220,9 +221,7 @@
                                 });
                             }
                             break;
-
                     }
-
                 });
             });
         </script>

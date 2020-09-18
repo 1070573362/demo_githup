@@ -9,6 +9,7 @@
         <script th:src="@{/js/common/layuiAdmin.js}"></script>
         <script th:src="@{/js/common/layuiDtree.js}"></script>
     </head>
+
     <body>
         <div class="layui-fluid">
             <div class="layui-card">
@@ -17,12 +18,14 @@
                         <fieldset class="layui-elem-field layui-field-title">
                             <legend>基本信息</legend>
                         </fieldset>
-                        <input type="hidden" name="id" placeholder="隐藏框Id">
+                        <input type="hidden" id="id" name="id" placeholder="隐藏框Id">
+                        <input type="hidden" id="parentId" name="parentId" placeholder="隐藏框Id">
                         <div class="layui-row layui-col-space10 layui-form-item ">
                             <div class="layui-form-item">
                                 <label class="layui-form-label">上级菜单</label>
                                 <div class="layui-input-block">
-                                    <ul id="parentIdSelTree" class="dtree" data-id="0"></ul>
+                                    <ul id="menuSelTree" class="dtree" data-id="0"></ul>
+
                                 </div>
                             </div>
                             <div class="layui-form-item">
@@ -58,7 +61,7 @@
                                 </div>
                             </div>
                             <div class="layui-form-item">
-                                <label class="layui-form-label">权限</label>
+                                <label class="layui-form-label">菜单权限</label>
                                 <div class="layui-input-block">
                                     <input type="text" name="permission" placeholder="菜单权限"
                                            autocomplete="off" class="layui-input">
@@ -67,8 +70,6 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">菜单图标</label>
                                 <div class="layui-input-block">
-                                    <!--<input type="text" name="icon" placeholder="菜单图标"-->
-                                    <!--autocomplete="off" class="layui-input">-->
                                     <input type="hidden" class="layui-input" name="icon" id="iconValue"
                                            placeholder="请选择菜单图标">
                                     <div class="layui-input-inline" style="width: 100px;">
@@ -88,9 +89,8 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="layui-row layui-col-space10 layui-form-item " align="center">
-                            <div class="layui-col-xs6" style="display:none;" id="btnSubmit">
+                            <div class="layui-col-xs6" id="btnSubmit" th:if="${action=='edit'}">
                                 <button class="layui-btn layui-btn-normal  layui-btn-fluid" lay-submit
                                         lay-filter="btnSubmit">
                                     提交
@@ -108,12 +108,6 @@
             </div>
         </div>
         <script th:inline="javascript">
-
-            if ([[${action}]].toString() === 'save') {
-                $('#btnSubmit').css("display", "block");
-            } else {
-                $('#btnClose').css("float", "none");
-            }
             layui.config({
                 base: '/layuiadmin/module/dtree/' //配置 layui 第三方扩展组件存放的基础目录
             }).extend({
@@ -122,31 +116,26 @@
                 const dtree = layui.dtree
                     , form = layui.form
                     , layer = layui.layer;
-
-
-                $.post(apiUrl.menu.getDTreeList,{type:"0"} ,function (res) {
-                    console.log([[${entity.parentId}]])
-                    if (res.code === 200 && res.status === true) {
-                        let data = res.data;
-                        let selectParam = dtree.renderSelect({
-                            elem: "#parentIdSelTree",
-                            data: data,
-                            dataFormat: "list",  //配置data的风格为list
-                            selectInputName: {
-                                nodeId: "parentId"
-                            },
-                            //  select: true,//指定下拉树模式
-                            done: function (res, $ul, first) {
-                                if (!Util.isEmpty([[${entity.parentId}]])) {
-                                    dtree.dataInit("parentIdSelTree", [[${entity.parentId}]]);
-                                    // 也可以在这里指定，第二个参数如果不填，则会自动返显当前选中的数据
-                                    selectParam = dtree.selectVal("parentIdSelTree");
-                                }
+                $.post(apiUrl.menu.getDTreeList, {type: "0"}, function (res) {
+                    console.log(res)
+                    if (res.code !== 200) return;
+                    let selectParam = dtree.renderSelect({
+                        elem: "#menuSelTree",
+                        data: res.data,
+                        dataFormat: "list",  //配置data的风格为list
+                        selectInputName: {
+                            nodeId: "parentId"
+                        },
+                        //  select: true,//指定下拉树模式
+                        done: function (res, $ul, first) {
+                            if (!Util.isEmpty([[${entity.parentId}]])) {
+                                dtree.dataInit("menuSelTree", [[${entity.parentId}]]);
+                                // 也可以在这里指定，第二个参数如果不填，则会自动返显当前选中的数据
+                                selectParam = dtree.selectVal("menuSelTree");
                             }
-                        });
-                    }
+                        }
+                    });
                 });
-
                 $("#selectIcon").on("click", function () {
                     iconShow = layer.open({
                         type: 2,
@@ -156,25 +145,22 @@
                     });
                     layer.full(iconShow);
                 });
-                if (!Util.isEmpty([[${entity.id}]])) {
-                    form.val('formFilter', {
-                        "id": [[${entity.id}]], // "name": "value"
-                        "type": [[${entity.type}]],
-                        "menuCode": [[${entity.menuCode}]],
-                        "menuName": [[${entity.menuName}]],
-                        "permission": [[${entity.permission}]],
-                        "href": [[${entity.href}]],
-                        "sort": [[${entity.sort}]],
-                    });
-                    $("#realIcon").show().html([[${entity.icon}]]);
-                    form.render(); //更新全部
-                }
+                form.val('formFilter', {
+                    "id": [[${entity.id}]], // "name": "value"
+                    "type": [[${entity.type}]],
+                    "menuCode": [[${entity.menuCode}]],
+                    "menuName": [[${entity.menuName}]],
+                    "permission": [[${entity.permission}]],
+                    "href": [[${entity.href}]],
+                    "sort": [[${entity.sort}]],
+                    "icon": [[${entity.icon}]],
+                });
+                $("#realIcon").html([[${entity.icon}]]);
+                form.render(); //更新全部
                 form.on('submit(btnSubmit)', function (data) {
-                    // debugger
                     let loadIndex = layer.load(2);
-
                     $.post(apiUrl.menu.save, data.field, function (res) {
-                        if (res.code === 200&&res.status===true) {
+                        if (res.code === 200) {
                             //获取当前页面关闭，关闭form弹框
                             let index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
                             parent.layer.close(index); //再执行本页面关闭
@@ -189,6 +175,5 @@
                 });
             });
         </script>
-
     </body>
 </html>
