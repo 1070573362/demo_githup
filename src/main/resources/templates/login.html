@@ -76,7 +76,8 @@
                 data: {userName: userName, password: password, calibrationBit: calibrationBit},
                 timeout: 5000,
                 success: function (res) {
-                    // console.log(res)
+
+                     console.log(res)
                     // debugger
                     if (res.status==true&&res.code == 200) {
                         layer.msg("登录成功", {time: 1000}, function () {
@@ -90,6 +91,7 @@
                     }
                 },
                 error: function (res) {
+                    console.log(res)
                     layer.msg('服务器请求超时...' ,{time: 1000}, function () {
                         layer.close(loadIndex);
                     });

@@ -66,13 +66,22 @@ public class SysUserController {
      */
     @RequestMapping("/html/user/addPage")
     public String addPage() {
-        return "html/systemSetup/userCenter/user/Add";
+        return "systemSetup/userCenter/user/Add";
     }
 
 
-    @RequestMapping("/html/user/UpdatePassWordPage")
+    @RequestMapping("/html/user/UpdatePasswordPage")
     public String UpdatePassWordPage(Model model) {
-        return "html/systemSetup/userCenter/user/UpdatePassWordPage";
+        return "systemSetup/userCenter/user/UpdatePasswordPage";
+    }
+    /**
+     * 修改密码
+     * @param model
+     * @return
+     */
+    @RequestMapping("/html/user/changePassword")
+    public String changePassword(Model model) {
+        return "systemSetup/userCenter/user/";
     }
 
     /**
@@ -84,7 +93,7 @@ public class SysUserController {
         model.addAttribute("action", action);
         String userRoleIds = "";
         if (StringUtils.isNotBlank(id)) {
-            model.addAttribute("Entity", sysUserService.getById(id));
+            model.addAttribute("entity", sysUserService.getById(id));
             QueryWrapper<SysUserRole> wrapper = new QueryWrapper<>();
             wrapper.eq("user_id", id);
             wrapper.eq("delFlag", false);
@@ -99,7 +108,7 @@ public class SysUserController {
             }
         }
         model.addAttribute("userRoleIds",userRoleIds);
-        return "html/systemSetup/userCenter/user/Update";
+        return "systemSetup/userCenter/user/Update";
     }
 
 
@@ -122,22 +131,12 @@ public class SysUserController {
         return ResultMessage.success(info);
     }
 
-    @RequestMapping("/api/auth/user/AllList")
-    @ResponseBody
-    @SysLog("查询用户管理信息")
-    public ResultMessage AllList(@RequestParam Map map) {
-        //判断是否有分页数据传过来
-        List<SysUser> list = sysUserService.AllList(map);
-        return ResultMessage.success(list);
-    }
 
 
-
-
-    @RequestMapping("/api/auth/user/delete")
+    @RequestMapping("/api/auth/user/deletes")
     @ResponseBody
     @SysLog("删除用户信息")
-    public ResultMessage delete(@RequestParam("ids[]") List<String> ids) {
+    public ResultMessage deletes(@RequestParam("ids[]") List<String> ids) {
         for (String data : ids) {
             sysUserService.removeById(data);
             QueryWrapper<SysUserRole> wrapper = new QueryWrapper<>();

@@ -54,14 +54,14 @@ public class SysRoleController {
     }
     @RequestMapping("html/role/addPage")
     public String addPage() {
-        return "html/systemSetup/userCenter/role/Add";
+        return "systemSetup/userCenter/role/Add";
     }
     @RequestMapping("html/role/updatePage")
     public String updatePage(Model model, String id, String action)
     { model.addAttribute("action", action);
         String authorityTree = "";
         if (StringUtils.isNotBlank(id)) {
-            model.addAttribute("Entity", sysRoleService.getById(id));
+            model.addAttribute("entity", sysRoleService.getById(id));
             QueryWrapper<SysRoleMenu> wrapper = new QueryWrapper<>();
             wrapper.eq("role_id", id);
             wrapper.eq("delFlag", false);
@@ -76,7 +76,7 @@ public class SysRoleController {
             }
         }
         model.addAttribute("authorityTree", authorityTree);
-        return "html/systemSetup/userCenter/role/Update";
+        return "systemSetup/userCenter/role/Update";
     }
 
 
@@ -111,10 +111,10 @@ public class SysRoleController {
     }
 
 
-    @RequestMapping("/api/auth/role/delete")
+    @RequestMapping("/api/auth/role/deletes")
     @ResponseBody
     @SysLog("删除角色信息")
-    public ResultMessage delete(@RequestParam("ids[]") List<String> ids) {
+    public ResultMessage deletes(@RequestParam("ids[]") List<String> ids) {
         for (String data : ids) {
             sysRoleService.removeById(data);
             QueryWrapper<SysRoleMenu> wrapper = new QueryWrapper<>();

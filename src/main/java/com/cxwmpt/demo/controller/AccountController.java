@@ -103,16 +103,6 @@ public class AccountController {
 
         return "home";
     }
-
-    /**
-     * 修改密码
-     * @param model
-     * @return
-     */
-    @RequestMapping("/html/changePassword")
-    public String changePassword(Model model) {
-        return "html/changePassword";
-    }
     /**
      * 忘记密码
      * @param model

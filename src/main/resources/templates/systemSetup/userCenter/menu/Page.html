@@ -73,14 +73,12 @@
                     , layer = layui.layer;
 
                 let selectNodeId = "";
-                // 点击节点名称获取选中节点值
-                dtree.on("node('dTreeMenu')", function (obj) {
-                    selectNodeId = obj.param.nodeId;
-                    reloadTable({"id": obj.param.nodeId});
-                    //   layer.msg(JSON.stringify(obj.param));
-                });
+
                 reloadTable(null);
                 function reloadTable(data) {
+                    if(data==null){
+                        selectNodeId = "";
+                    }
                     $.post(apiUrl.menu.getDTreeList, {type: "0"}, function (res) {
                         if (res.code !== 200) return;
                         dtree.render({
@@ -142,17 +140,20 @@
                         ]
                     });
                 }
-
+                // 点击节点名称获取选中节点值
+                dtree.on("node('dTreeMenu')", function (obj) {
+                    selectNodeId = obj.param.nodeId;
+                    reloadTable({"id": selectNodeId});
+                    //   layer.msg(JSON.stringify(obj.param));
+                });
                 //监听表格头部工具
                 table.on('toolbar(dataTable)', function (obj) {
                     //获取选中数据
                     let checkStatus = table.checkStatus('dataList')//数据表加载后的Id
                         , data = checkStatus.data;
                     let arr = [];
-                    //新增
                     switch (obj.event) {
                         case 'add'://添加
-                            console.log(selectNodeId)
                             layer.open({
                                 type: 2,//1是div 2是html
                                 title: '新增信息',
@@ -167,7 +168,7 @@
                                 fixed: true,//固定在可视区域
                                 end: function () {//销毁此页面回调
                                     //调用此方法重载table
-                                    reloadTable();
+                                    reloadTable({"id": selectNodeId});
                                 },
                             });
                             break;
@@ -192,7 +193,7 @@
                                     // , maxmin: true//最大小化按钮
                                     fix: false,//固定在可视区域
                                     end: function () {//销毁此页面回调
-                                        reloadTable();
+                                        reloadTable({"id": selectNodeId});
                                     },
                                 });
                             }
@@ -212,7 +213,7 @@
                                         if (res.code === 200) {
                                             layer.msg("操作成功", {icon: 6});
                                             layer.close(loadIndex);
-                                            reloadTable();
+                                            reloadTable({"id": selectNodeId});
                                         } else {
                                             layer.msg(res.message, {icon: 5});
                                             layer.close(loadIndex);
@@ -220,6 +221,25 @@
                                     });
                                 });
                             }
+                            break;
+                        case 'details'://详情
+                            layer.open({
+                                type: 2,
+                                title: '查看详情',
+                                content: apiUrl.menu.updatePage + '?action=details&id=' + obj.data.id,
+                                skin: 'layui-layer-molv',
+                                area: ['750px', '550px'],
+                                closeBtn: 1,//不显示则closeBtn: 0
+                                shade: [0.9, '#393D49'],
+                                shadeClose: true,//点击弹层外区域关闭弹框
+                                //time: 300000, //默认关闭毫秒数
+                                // , maxmin: true//最大小化按钮
+                                fixed: true,//固定在可视区域
+                            });
+                            break;
+                        default:
+                        case 'refresh'://刷新
+                            reloadTable(null);
                             break;
                     }
                 });

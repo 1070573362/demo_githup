@@ -140,7 +140,6 @@
                         {field: 'remark', title: '备注'},
                         {field: 'createDate', title: '创建时间'},
                         {field: 'updateDate', title: '修改时间'},
-
                     ]
                 ]
             });
@@ -164,7 +163,7 @@
                     layer.open({
                         type: 2,//1是div 2是html
                         title: '新增信息',
-                        content: apiUrl.role.operatePage + '?action=save&id=""',
+                        content: apiUrl.role.addPage,
                         skin: 'layui-layer-molv',
                         area: ['950px', '550px'],
                         closeBtn: 1,//不显示则closeBtn: 0
@@ -189,7 +188,7 @@
                         layer.open({
                             type: 2,
                             title: '修改信息',
-                            content: apiUrl.role.operatePage + '?action=save&id=' + arr,
+                            content: apiUrl.role.updatePage + '?action=edit&id=' +  arr[0],
                             skin: 'layui-layer-molv',
                             area: ['950px', '550px'],
                             closeBtn: 1,//不显示则closeBtn: 0
@@ -216,8 +215,8 @@
                         }
                         layer.confirm('您确定要删除这些数据吗？', function (index) {
                             let loadIndex = layer.load(2);
-                            $.post(apiUrl.role.delete, {ids: arr}, function (res) {
-                                if (res.code === 200 && res.status === true) {
+                            $.post(apiUrl.role.deletes, {ids: arr}, function (res) {
+                                if (res.code === 200) {
                                     layer.msg("操作成功", {icon: 6});
                                     layer.close(loadIndex);
                                     reloadTable();
@@ -239,7 +238,7 @@
                         layer.open({
                             type: 2,
                             title: '查看详情信息',
-                            content: apiUrl.role.operatePage + '?action=details&id=' + arr,
+                            content: apiUrl.role.updatePage + '?action=details&id=' + arr[0],
                             skin: 'layui-layer-molv',
                             area: ['950px', '550px'],
                             closeBtn: 1,//不显示则closeBtn: 0

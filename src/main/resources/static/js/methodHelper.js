@@ -498,58 +498,7 @@ $createAjax = function (ajaxrequire,callback) {
 }
 
 
-//shiro 标签仿造版
-function checkPermission() {
 
-    var pers = [];
-
-    let ajaxrequire = {
-        _urls: apiUrl.account.isPermission,
-        _method: 'post',
-        _dataType: 'json',
-        _async: false,
-    };
-    $createAjax(ajaxrequire, function (res) {
-        pers = res.data;
-        $("[permission]").each(function() {
-            var per = $(this).attr("permission");
-            if ($.inArray(per, res.data) < 0) {
-                $(this).hide();
-            }
-        });
-    })
-    return pers;
-}
-
-$.fn.selectDtree = function (config,_function,treedata) {
-    var curObj = this;
-    var _id = $(curObj).attr("id");
-    var opt = {
-        dtree_config:{
-            elem: "#"+_id,
-            url: treedata,  //异步接口
-            selectInputName: {
-                // nodeId: "pId",
-                // context: "pName"
-            }
-        }
-    };
-    $.extend(true,opt, config);
-    layui.config({
-        base:'/layui_ext/dtree/'
-    }).extend({
-        dtree: 'dtree'
-    });
-    layui.use(['dtree'],function(){
-        var dtree=layui.dtree;
-        if(_function!=undefined&&_function instanceof Function){
-            _function(dtree);
-        }
-        dtree.renderSelect(opt.dtree_config);
-
-    });
-
-}
 
 function resolvingDate(date){
     //date是传入的时间

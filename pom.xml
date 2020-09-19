@@ -57,11 +57,6 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
         <!--redis插件-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -78,6 +73,20 @@
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper-spring-boot-starter</artifactId>
             <version>1.2.10</version>
+            <!--使用spring boot2整合 pagehelper-spring-boot-starter必须排除一下依赖
+             因为pagehelper-spring-boot-starter也已经在pom依赖了mybatis与mybatis-spring
+             所以会与mybatis-plus-boot-starter中的mybatis与mybatis-spring发生冲突
+         -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mybatis</groupId>
+                    <artifactId>mybatis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mybatis</groupId>
+                    <artifactId>mybatis-spring</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!--阿里FastJson序列化/反序列化组件-->
         <dependency>

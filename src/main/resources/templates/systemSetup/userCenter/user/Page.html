@@ -7,6 +7,7 @@
     <script th:src="@{/js/jquery/jquery.min.js}"></script>
     <script th:src="@{/js/methodHelper.js}"></script>
     <script th:src="@{/js/common/layuiAdmin.js}"></script>
+    <script th:src="@{/js/common/layuiDtree.js}"></script>
 </head>
 <body>
 <div class="layui-fluid">
@@ -14,25 +15,23 @@
         <div class="layui-col-md10">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    管理员
+                    系统设置/用户管理
                 </div>
                 <div class="layui-card-body nepadmin-table-full">
-                    <script type="text/html" id="addBar">  <!--数据表格上方操作框-->
+                    <script type="text/html" id="addBar">
                     <div class="layui-btn-container">
-
                         <shiro:hasPermission name="sys:user:add">
                             <button class="layui-btn layui-btn-sm" lay-event="add">
                                 <i class='layui-icon layui-icon-add-circle'></i>新增
                             </button>
                         </shiro:hasPermission>
-                        <shiro:hasPermission name="sys:user:edit">
+                        <shiro:hasPermission name="sys:user:add">
                             <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="edit">
                                 <i class='layui-icon layui-icon-edit'></i>修改
                             </button>
                         </shiro:hasPermission>
-                        <shiro:hasPermission name="sys:user:del">
-                            <button permission="sys:user:delete" class="layui-btn layui-btn-sm layui-btn-danger"
-                                    lay-event="del">
+                        <shiro:hasPermission name="sys:user:add">
+                            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del">
                                 <i class='layui-icon layui-icon-delete'></i>删除
                             </button>
                         </shiro:hasPermission>
@@ -40,12 +39,9 @@
                         <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="details">
                             <i class='layui-icon layui-icon-read'></i>详情
                         </button>
-
-
                         <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="refresh">
                             <i class='layui-icon layui-icon-refresh'></i>刷新
                         </button>
-
                     </div>
                     </script>
                     <table id="dataTable" lay-filter="dataTable"></table> <!--数据表格-->
@@ -99,83 +95,51 @@
             layer = layui.layer;
         reloadTable(null);
         function reloadTable(data) {
-                table.render({
-                    elem: '#dataTable',//唯一ID
-                    id: 'dataList',//数据表格的id
-                    toolbar: '#addBar',//头部操作栏id
-                    size: 0,//表格大小
-                    url: apiUrl.user.pageList,
-                    method: 'post',
-                    page: true, //开启分页
-                    limits: [10, 20, 30],
-                    limit: 10, //每页默认显示的数量
-                    height: 'full-75', //高度最大化减去差值
-                    where: data,
-                    parseData: function (res) {
-                        //console.log(res)
-                        //res 即为原始返回的数据
-                        return {
-                            "code": 0, //解析接口状态
-                            "msg": 0, //解析提示文本
-                            "count": res.data.total, //解析数据长度
-                            "data": res.data.list //解析数据列表
-                        };
-                    },
-                    cols: [
-                        [ //表头
-                            {type: 'checkbox', fixed: 'left'},
-                            {unresize: true, fixed: 'left', title: '序号', type: 'numbers', width: 70},
-                            {field: 'id', title: 'ID', width: 70, sort: true, fixed: 'left', hide: true},
-                            {field: 'account', title: '用户账号', width: 120},
-                            {field: 'userName', title: '姓名', width: 120},
-                            {
-                                field: 'sex', title: '性别', width: 120, templet: function (val) {
-                                    switch (val.sex) {
-                                        case "1":
-                                            return "<span class='layui-badge'>男</span>";
-                                        case "2":
-                                            return "<span class='layui-badge'>女</span>";
-                                        default:
-                                            case "3":
-                                            return "<span class='layui-badge'>未知</span>";
-                                    }
-                                }
-                            },
-                            {
-                                field: 'status', title: '状态', width: 120, templet: function (val) {
-                                    switch (val.status) {
-                                        case "1":
-                                            return "<span class='layui-badge layui-bg-green '>正常</span>";
-                                        case "2":
-                                            return "<span class='layui-badge layui-bg-orange'>停用</span>";
-                                        case "3":
-                                            return "<span class='layui-badge layui-bg-red'>锁定</span>";
-                                        default:
-                                            return "<span class='layui-badge'>未知</span>";
-                                    }
-                                }
-                            },
-                            {field: 'mobile', title: '联系电话', width: 120},
-                            {field: 'qq', title: 'QQ号码', width: 120},
-                            {field: 'wx', title: '微信', width: 120},
-                            {field: 'email', title: '电子邮件', width: 120},
-                            {field: 'userNo', title: '身份证号', width: 120},
-                            {field: 'address', title: '联系地址', width: 120},
-                            {field: 'region', title: '管辖地区', width: 120,hide:false},
-                            {field: 'remark', title: '备注', width: 250},
-                            {field: 'createDate', title: '创建时间', sort: true, width: 170},
-                            {field: 'updateDate', title: '修改时间', sort: true, width: 170},
-                            {
-                                fixed: 'right', title: '操作', width: 230, align: 'center', templet: function () {
-                                    let result = "";
-                                    result += "<a class='layui-btn layui-btn-primary layui-btn-xs' lay-event='resetPassword'><i class='layui-icon layui-icon-refresh'></i>重置密码</a>";
+            table.render({
+                elem: '#dataTable',//唯一ID
+                id: 'dataList',//数据表格的id
+                toolbar: '#addBar',//头部操作栏id
+                size: 0,//表格大小
+                url: apiUrl.user.pageList,
+                method: 'post',
+                page: true, //开启分页
+                limits: [10, 20, 30],
+                limit: 10, //每页默认显示的数量
+                height: 'full-75', //高度最大化减去差值
+                where: data,
+                parseData: function (res) {
+                    //console.log(res)
+                    //res 即为原始返回的数据
+                    return {
+                        "code": 0, //解析接口状态
+                        "msg": 0, //解析提示文本
+                        "count": res.data.total, //解析数据长度
+                        "data": res.data.list //解析数据列表
+                    };
+                },
+                cols: [
+                    [ //表头
+                        {type: 'checkbox', fixed: 'left'},
+                        {unresize: true, fixed: 'left', title: '序号', type: 'numbers', width: 70},
+                        {field: 'id', title: 'ID', width: 70, sort: true, fixed: 'left', hide: true},
+                        {field: 'account', title: '用户账号', width: 120},
+                        {field: 'username', title: '姓名', width: 120},
+                        {field: 'sex', title: '性别', width: 120},
+                        {field: 'status', title: '状态', width: 120},
+                        {field: 'mobile', title: '联系电话', width: 120},
+                        {field: 'qq', title: 'QQ号码', width: 120},
+                        {field: 'wechat', title: '微信', width: 120},
+                        {field: 'email', title: '电子邮件', width: 120},
+                        {field: 'userNo', title: '身份证号', width: 120},
+                        {field: 'address', title: '联系地址', width: 120},
+                        {field: 'remark', title: '备注', width: 250},
+                        {field: 'createDate', title: '创建时间', sort: true, width: 170},
+                        {field: 'updateDate', title: '修改时间', sort: true, width: 170},
 
-                                    return result;
-                                }
-                            },//绑定tpl表达式
-                        ]
                     ]
-                });
+                ],
+            });
+
         }
 
         //监听查询提交
@@ -183,48 +147,30 @@
             reloadTable(data.field);
             return false;
         });
-        //监听操作工具栏
-        table.on('tool(dataTable)', function (obj) {
-            //重置密码
-            if (obj.event === 'resetPassword') {
-                layer.confirm('重置的密码变更为123？', function (index) {
-                    let loadIndex = layer.load(2);
-                    $.post(apiUrl.user.resetPassword, {id: obj.data.id}, function (res) {
-                        if (res.code === 200&&res.status===true) {
-                            layer.msg("操作成功", {icon: 6});
-                            layer.close(loadIndex);
-                        } else {
-                            layer.msg(res.message, {icon: 5});
-                            layer.close(loadIndex);
-                        }
-                    })
-                });
-            }
-        });
+
         //监听表格头部工具
         table.on('toolbar(dataTable)', function (obj) {
             //获取选中数据
             let checkStatus = table.checkStatus('dataList')//数据表加载后的Id
                 , data = checkStatus.data;
             let arr = [];
-
             switch (obj.event) {
                 case 'add'://添加
                     layer.open({
                         type: 2,//1是div 2是html
                         title: '新增信息',
-                        content: apiUrl.user.operatePage + '?action=save&id=""',
-                        skin: 'layui-layer-molv',
+                        content: apiUrl.user.addPage,
+                        shade: [0.9, '#393D49'],
                         area: ['100%', '100%'],
                         closeBtn: 1,//不显示则closeBtn: 0
-                        shade: [0.9, '#393D49'],
                         shadeClose: false,//点击弹层外区域关闭弹框
-                        //time: 300000,  //默认关闭毫秒数
+                        // time: 300000,//默认关闭毫秒数
+                        //anim: 2,//弹出动画
                         // , maxmin: true//最大小化按钮
-                        fixed: true, //固定在可视区域
+                        fixed: true,//固定在可视区域
                         end: function () {//销毁此页面回调
                             //调用此方法重载table
-                            reloadTable(null);
+                            reloadTable();
                         },
                     });
                     break;
@@ -234,26 +180,22 @@
                     } else if (data.length > 1) {
                         layer.alert('只能选择一条数据进行编辑', {icon: 2});
                     } else {
-                        if (data[0].isMain) {
-                            layer.alert('这个是超级管理员，拒绝对其操作！', {icon: 2});
-                            return;
-                        }
                         arr[0] = data[0].id;
                         layer.open({
                             type: 2,
-                            title: '修改信息',
-                            content: apiUrl.user.operatePage + '?action=save&id=' + arr,
-                            skin: 'layui-layer-molv',
+                            title: '修改管理员信息',
+                            content: apiUrl.user.updatePage + '?action=edit&id=' + arr[0],
                             area: ['100%', '100%'],
+                            // , offset: '10px'
                             closeBtn: 1,//不显示则closeBtn: 0
                             shade: [0.9, '#393D49'],
-                            shadeClose: false,//点击弹层外区域关闭弹框
+                            // , shadeClose: true//点击弹层外区域关闭弹框
                             // time: 300000 ,//默认关闭毫秒数
+                            //anim: 2  ,//弹出动画
                             // , maxmin: true//最大小化按钮
-                            fixed: true,//固定在可视区域
+                            fix: false,//固定在可视区域
                             end: function () {//销毁此页面回调
-                                //调用此方法重载table
-                                reloadTable(null);
+                                reloadTable();
                             },
                         });
                     }
@@ -265,17 +207,12 @@
                     } else {
                         for (let i = 0; i < data.length; i++) //删除数据得到合同编号
                         {
-                            if (data[i].isMain) {
-                                layer.alert('您所勾选的数据存在超级管理员，不能对其进行删除！', {icon: 2});
-                                return;
-                            }
                             arr[i] = data[i].id;
                         }
-                        layer.confirm('您确定要删除这些数据吗？', function (index) {
-                            //关闭弹框
+                        layer.confirm('您确定要删除条菜单包括他的子菜单吗？', function (index) {
                             let loadIndex = layer.load(2);
-                            $.post(apiUrl.user.delete, {ids: arr}, function (res) {
-                                if (res.code === 200&&res.status===true) {
+                            $.post(apiUrl.user.deletes, {ids: arr}, function (res) {
+                                if (res.code === 200) {
                                     layer.msg("操作成功", {icon: 6});
                                     layer.close(loadIndex);
                                     reloadTable();
@@ -288,35 +225,24 @@
                     }
                     break;
                 case 'details'://详情
-                    if (data.length === 0) {
-                        layer.alert('必须选择一条数据', {icon: 2});
-                    } else if (data.length > 1) {
-                        layer.alert('只能选择一条数据进行编辑', {icon: 2});
-                    } else {
-                        if (data[0].isMain) {
-                            layer.alert('这个是超级管理员，拒绝对其操作！', {icon: 2});
-                            return;
-                        }
-                        arr[0] = data[0].id;
-                        layer.open({
-                            type: 2,
-                            title: '查看详情信息',
-                            content: apiUrl.user.operatePage + '?action=details&id=' + arr,
-                            skin: 'layui-layer-molv',
-                            area: ['100%', '100%'],
-                            closeBtn: 1,//不显示则closeBtn: 0
-                            shade: [0.9, '#393D49'],
-                            shadeClose: true,//点击弹层外区域关闭弹框
-                            //time: 300000, //默认关闭毫秒数
-                            // , maxmin: true//最大小化按钮
-                            fixed: true,//固定在可视区域
-                        });
-                    }
+                    layer.open({
+                        type: 2,
+                        title: '查看详情',
+                        content: apiUrl.user.updatePage + '?action=details&id=' + obj.data.id,
+                        skin: 'layui-layer-molv',
+                        area: ['750px', '550px'],
+                        closeBtn: 1,//不显示则closeBtn: 0
+                        shade: [0.9, '#393D49'],
+                        shadeClose: true,//点击弹层外区域关闭弹框
+                        //time: 300000, //默认关闭毫秒数
+                        // , maxmin: true//最大小化按钮
+                        fixed: true,//固定在可视区域
+                    });
                     break;
+                default:
                 case 'refresh'://刷新
                     reloadTable(null);
                     break;
-                default:
             }
         });
     });

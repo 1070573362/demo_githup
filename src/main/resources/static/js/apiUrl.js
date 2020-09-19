@@ -22,7 +22,7 @@ const apiUrl = {
         updatePage: API_BASE_URL + '/html/user/updatePage', //跳转修改页面
         pageList: API_BASE_URL + '/api/auth/user/pageList',//分页显示和查询
         AllList: API_BASE_URL + '/api/auth/user/AllList',//显示和查询
-        delete: API_BASE_URL + '/api/auth/user/delete',//删除和批量删除
+        deletes: API_BASE_URL + '/api/auth/user/deletes',//批量删除
         save: API_BASE_URL + '/api/auth/user/save',//新增和修改
         saveNewPassword: API_BASE_URL + '/api/auth/user/saveNewPassword',//修改密码页面
 
@@ -35,6 +35,8 @@ const apiUrl = {
         AllList: API_BASE_URL + '/api/auth/role/AllList',//显示和查询
         save: API_BASE_URL + '/api/auth/role/save',//新增和修改
         delete: API_BASE_URL + '/api/auth/role/delete',//删除和批量删除
+        deletes: API_BASE_URL + '/api/auth/role/deletes',//删除和批量删除
+
     },
     menu: {
         iconList: API_BASE_URL + '/html/menu/icon',//跳转图标页面

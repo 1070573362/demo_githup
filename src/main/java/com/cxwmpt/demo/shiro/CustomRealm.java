@@ -129,11 +129,6 @@ public class CustomRealm extends AuthorizingRealm {
         }
         info.setRoles(roleNames);
         info.setStringPermissions(permissions);
-
         return info;
     }
-
-
-
-
 }
