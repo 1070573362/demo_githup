@@ -66,8 +66,8 @@ const apiUrl = {
 
     },
     log: {
-        datalist: API_BASE_URL + '/api/auth/sys/log/list', //查询日志
-        delete: API_BASE_URL + '/api/auth/sys/log/delete', //删除日志
+        pageList: API_BASE_URL + '/api/auth/log/pageList',//分页显示和查询
+        deletes: API_BASE_URL + '/api/auth/log/deletes', //删除日志
     },
     dict: {
         datalist: API_BASE_URL + '/api/auth/sys/dict/datalist', //查询所有数据字典

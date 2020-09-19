@@ -69,20 +69,16 @@ public class SysUserController {
         return "systemSetup/userCenter/user/Add";
     }
 
-
-    @RequestMapping("/html/user/UpdatePasswordPage")
-    public String UpdatePassWordPage(Model model) {
-        return "systemSetup/userCenter/user/UpdatePasswordPage";
-    }
     /**
      * 修改密码
      * @param model
      * @return
      */
-    @RequestMapping("/html/user/changePassword")
-    public String changePassword(Model model) {
-        return "systemSetup/userCenter/user/";
+    @RequestMapping("/html/user/UpdatePasswordPage")
+    public String UpdatePassWordPage(Model model) {
+        return "systemSetup/userCenter/user/UpdatePasswordPage";
     }
+
 
     /**
      * TbAdmin加载新增form页面
@@ -96,7 +92,7 @@ public class SysUserController {
             model.addAttribute("entity", sysUserService.getById(id));
             QueryWrapper<SysUserRole> wrapper = new QueryWrapper<>();
             wrapper.eq("user_id", id);
-            wrapper.eq("delFlag", false);
+            wrapper.eq("del_flag", false);
             List<SysUserRole> sysUserRoleList = sysUserRoleService.list(wrapper);
             for (int i = 0; i < sysUserRoleList.size(); i++) {
                 SysUserRole sysUserRole = sysUserRoleList.get(i);
@@ -141,7 +137,7 @@ public class SysUserController {
             sysUserService.removeById(data);
             QueryWrapper<SysUserRole> wrapper = new QueryWrapper<>();
             wrapper.eq("user_id", data);
-            wrapper.eq("delFlag", false);
+            wrapper.eq("del_flag", false);
             sysUserRoleService.remove(wrapper);
         }
         return ResultMessage.success("删除数据成功");
@@ -159,7 +155,7 @@ public class SysUserController {
         //查询有没有重复的字段
         QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
         wrapper.eq("account", sysUser.getAccount());
-        wrapper.eq("delFlag", false);
+        wrapper.eq("del_flag", false);
         int count = sysUserService.count(wrapper);
         //添加新用户验证loginID是否相同
         if (sysUser.getId() != null && sysUser.getId().length() > 0) {
@@ -182,7 +178,7 @@ public class SysUserController {
                 //删除原来权限
                 QueryWrapper<SysUserRole> wrapper1 = new QueryWrapper<>();
                 wrapper1.eq("user_id", sysUser.getId());
-                wrapper1.eq("delFlag", false);
+                wrapper1.eq("del_flag", false);
                 sysUserRoleService.remove(wrapper1);
                 for (String data : array) {
                     SysUserRole sysUserRole = new SysUserRole();
@@ -227,7 +223,7 @@ public class SysUserController {
         SysUser loginUser = (SysUser) getSubject().getPrincipal();
         QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
         wrapper.eq("id", loginUser.getId());
-        wrapper.eq("delFlag", 0);
+        wrapper.eq("del_flag", 0);
         SysUser sysUser = sysUserService.getOne(wrapper);
         if (sysUser == null) {
             return ResultMessage.error(ResultCodeEnum.USER_IS_NULL);

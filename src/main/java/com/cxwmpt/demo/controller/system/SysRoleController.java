@@ -64,7 +64,7 @@ public class SysRoleController {
             model.addAttribute("entity", sysRoleService.getById(id));
             QueryWrapper<SysRoleMenu> wrapper = new QueryWrapper<>();
             wrapper.eq("role_id", id);
-            wrapper.eq("delFlag", false);
+            wrapper.eq("del_flag", false);
             List<SysRoleMenu> sysRoleMenus = sysRoleMenuService.list(wrapper);
             for (int i = 0; i < sysRoleMenus.size(); i++) {
                 SysRoleMenu sysRoleMenu = sysRoleMenus.get(i);
@@ -119,7 +119,7 @@ public class SysRoleController {
             sysRoleService.removeById(data);
             QueryWrapper<SysRoleMenu> wrapper = new QueryWrapper<>();
             wrapper.eq("role_id", data);
-            wrapper.eq("delFlag", false);
+            wrapper.eq("del_flag", false);
             sysRoleMenuService.remove(wrapper);
         }
         return ResultMessage.success();
@@ -138,7 +138,7 @@ public class SysRoleController {
         //查询有没有重复的字段
         QueryWrapper<SysRole> wrapper = new QueryWrapper<>();
         wrapper.eq("role_name", sysRole.getRoleName());
-        wrapper.eq("delFlag", false);
+        wrapper.eq("del_flag", false);
         int count = sysRoleService.count(wrapper);
         //添加新用户验证loginID是否相同
         if (sysRole.getId() != null && sysRole.getId().length() > 0) {
@@ -156,7 +156,7 @@ public class SysRoleController {
                 //删除原来权限
                 QueryWrapper<SysRoleMenu> wrapper1 = new QueryWrapper<>();
                 wrapper1.eq("role_id", sysRole.getId());
-                wrapper1.eq("delFlag", false);
+                wrapper1.eq("del_flag", false);
                 sysRoleMenuService.remove(wrapper1);
                 for (String data : array) {
                     SysRoleMenu sysRoleMenu = new SysRoleMenu();

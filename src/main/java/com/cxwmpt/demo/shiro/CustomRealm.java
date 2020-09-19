@@ -55,7 +55,7 @@ public class CustomRealm extends AuthorizingRealm {
         //查询用户信息
         QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
         wrapper.eq("account", account);
-        wrapper.eq("delFlag", 0);
+        wrapper.eq("del_flag", 0);
         SysUser user = sysUserService.getOne(wrapper);
         if (user == null) {
 

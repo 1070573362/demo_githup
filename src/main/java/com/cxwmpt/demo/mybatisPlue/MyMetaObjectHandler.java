@@ -8,7 +8,8 @@ import java.util.Date;
 
 
 /**
- * 字段填充
+ * 字段自动填充
+ * @author Administrator
  */
 @Component
 public class MyMetaObjectHandler implements MetaObjectHandler {
@@ -24,11 +25,15 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         }
         if (metaObject.hasGetter("updateDate")) {
             this.setFieldValByName("updateDate", new Date(), metaObject);
-
         }
     }
 
-    // 更新的税后自动填充
+
+
+    /**
+     * 更新的税后自动填充
+     * @param metaObject
+     */
     @Override
     public void updateFill(MetaObject metaObject) {
         if (metaObject.hasGetter("updateDate")) {

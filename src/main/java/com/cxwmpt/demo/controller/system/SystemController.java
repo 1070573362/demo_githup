@@ -1,10 +1,14 @@
 package com.cxwmpt.demo.controller.system;
 
+import com.cxwmpt.demo.annotation.SysLog;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Created by admin on 2020/4/9.
+ *
+ * @author admin
+ * @date 2020/4/9
  */
 @Controller
 public class SystemController {
@@ -13,9 +17,10 @@ public class SystemController {
      * druid 数据监控页面
      * @return
      */
-    @GetMapping(value = "html/sys/druid")
+    @RequestMapping(value = "/html/system/druid")
+    @SysLog("打开用户管理窗口")
     public String druid() {
-        return "system/druid/index";
+        return "systemSetup/userCenter/druid/index";
     }
 
 }

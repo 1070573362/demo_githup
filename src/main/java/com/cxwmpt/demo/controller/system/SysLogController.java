@@ -35,7 +35,7 @@ public class SysLogController {
      */
     @GetMapping("/html/syslog/page")
     public String page() {
-        return "html/systemSetup/userCenter/log/Page";
+        return "systemSetup/userCenter/log/Page";
     }
 
     /**
@@ -43,27 +43,23 @@ public class SysLogController {
      * @param params
      * @return
      */
-    @PostMapping("/api/auth/sys/log/list")
+    @PostMapping("/api/auth/log/pageList")
     @ResponseBody
-    public ResultMessage<Object> selectData(@RequestParam Map<String, Object> params) {
+    public ResultMessage selectData(@RequestParam Map<String, Object> params) {
 
         if (params.containsKey("page") && params.containsKey("limit")) {
             PageHelper.startPage(Integer.parseInt(params.get("page").toString()), Integer.parseInt(params.get("limit").toString()));
         }
 
         QueryWrapper<SysLog> wrapper = new QueryWrapper<>();
-
         if (params.get("classMethod") != null && !("").equals(params.get("classMethod"))) {
             wrapper.like("class_method", params.get("classMethod"));
         }
-
-        wrapper.orderByDesc("createDate");
+        wrapper.orderByDesc("create_date");
 
         List<SysLog> list = sysLogService.list(wrapper);
-
         PageInfo<SysLog> info = new PageInfo<>(list);
-
-        return ResultMessage.success("获取分页数据成功",info.getList(),info.getPageNum(), (int)info.getTotal());
+        return ResultMessage.success(info);
     }
 
     /**
@@ -71,10 +67,9 @@ public class SysLogController {
      * @param ids
      * @return
      */
-    @PostMapping("/api/auth/sys/log/delete")
+    @PostMapping("/api/auth/log/deletes")
     @ResponseBody
-    public ResultMessage<Object> delete(@RequestParam("ids[]") List<String> ids) {
-        //删除部门信息
+    public ResultMessage<Object> deletes(@RequestParam("ids[]") List<String> ids) {
         for (String id : ids) {
             sysLogService.removeById(id);
         }

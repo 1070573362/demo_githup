@@ -7,20 +7,21 @@
     <result column="role_name" jdbcType="VARCHAR" property="roleName" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="createId" jdbcType="VARCHAR" property="createId" />
-    <result column="createDate" jdbcType="TIMESTAMP" property="createDate" />
-    <result column="updateId" jdbcType="VARCHAR" property="updateId" />
-    <result column="updateDate" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="create_id" jdbcType="VARCHAR" property="createId" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="update_id" jdbcType="VARCHAR" property="updateId" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, role_name, status as `status`, remark, createId, createDate, updateId, updateDate
+    id, role_name, status as `status`, remark, create_date, create_id, update_date, update_id, del_flag
   </sql>
     <select id="AllList" resultMap="BaseResultMap">
       SELECT
       <include refid="Base_Column_List"/>
       FROM sys_role
       <where>
-      1=1 and delFlag=false
+      1=1 and del_flag=false
       <if test='map.roleName!=""&amp;&amp; map.roleName!=null'>
         and role_name like concat ('%' , #{map.roleName} , '%')
       </if>

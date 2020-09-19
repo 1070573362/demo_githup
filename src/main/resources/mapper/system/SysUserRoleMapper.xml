@@ -6,10 +6,9 @@
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="user_id" jdbcType="VARCHAR" property="userId" />
     <result column="role_id" jdbcType="VARCHAR" property="roleId" />
-    <result column="createId" jdbcType="VARCHAR" property="createId" />
-    <result column="createDate" jdbcType="TIMESTAMP" property="createDate" />
+
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, role_id, createId, createDate
+    id, user_id, role_id
   </sql>
 </mapper>

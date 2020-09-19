@@ -34,13 +34,13 @@ public abstract class BaseEntity<T extends Model> extends Model {
      *  创建者
      */
 
-    @TableField(value = "createId")
+    @TableField(value = "create_id")
     protected String createId;
 
     /**
      * 创建日期
      */
-    @TableField(value = "createDate", fill = FieldFill.INSERT)
+    @TableField(value = "create_date", fill = FieldFill.INSERT)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape= JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     protected Date createDate;
@@ -48,13 +48,13 @@ public abstract class BaseEntity<T extends Model> extends Model {
     /**
      * 更新者
      */
-    @TableField(value = "updateId")
+    @TableField(value = "update_id")
     protected String updateId;
 
     /**
      * 更新日期
      */
-    @TableField(value = "updateDate", fill = FieldFill.INSERT_UPDATE)
+    @TableField(value = "update_date", fill = FieldFill.INSERT_UPDATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape= JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     protected Date updateDate;
@@ -62,7 +62,7 @@ public abstract class BaseEntity<T extends Model> extends Model {
     /**
      * 逻辑删除（Y：正常；N：删除；A：审核；）
      */
-    @TableField(value = "delFlag")
+    @TableField(value = "del_flag")
     protected Boolean delFlag;
 
     @Override
