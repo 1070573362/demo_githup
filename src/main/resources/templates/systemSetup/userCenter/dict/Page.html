@@ -22,19 +22,25 @@
                 <div class="layui-card-body nepadmin-table-full">
                     <script type="text/html" id="addBar">  <!--数据表格上方操作框-->
                     <div class="layui-btn-container">
+                        <shiro:hasPermission name="sys:dict:add">
+                            <button class="layui-btn layui-btn-sm" lay-event="add">
+                                <i class='layui-icon layui-icon-add-circle'></i>新增
+                            </button>
+                        </shiro:hasPermission>
+                        <shiro:hasPermission name="sys:dict:edits">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="edit">
+                                <i class='layui-icon layui-icon-edit'></i>修改
+                            </button>
+                        </shiro:hasPermission>
+                        <shiro:hasPermission name="sys:dict:del">
+                            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del">
+                                <i class='layui-icon layui-icon-delete'></i>删除
+                            </button>
+                        </shiro:hasPermission>
 
-                        <button permission="sys:dictIndex:add" class="layui-btn layui-btn-sm" lay-event="addIndex">
-                            <i class='layui-icon layui-icon-add-circle' permission="sys:company:add"></i>新增索引
+                        <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="details">
+                            <i class='layui-icon layui-icon-read'></i>详情
                         </button>
-
-                        <button permission="sys:dict:add" class="layui-btn layui-btn-sm" lay-event="addDict">
-                            <i class='layui-icon layui-icon-add-circle' permission="sys:company:add"></i>新增字典
-                        </button>
-
-                        <button permission="sys:dict:delete" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del">
-                            <i class='layui-icon layui-icon-delete'></i>删除
-                        </button>
-
                         <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="refresh">
                             <i class='layui-icon layui-icon-refresh'></i>刷新
                         </button>

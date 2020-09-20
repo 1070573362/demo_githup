@@ -19,10 +19,7 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
+
         <!--web相关依赖-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -101,6 +98,17 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.51</version>
         </dependency>
+        <!--thymeLeaf-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <!--Shiro控制ThymeLeaf界面按钮级权限控制-->
+        <dependency>
+            <groupId>com.github.theborakompanioni</groupId>
+            <artifactId>thymeleaf-extras-shiro</artifactId>
+            <version>2.0.0</version>
+        </dependency>
         <!-- aes url数据加密 -->
         <dependency>
             <groupId>commons-codec</groupId>
@@ -137,12 +145,7 @@
             <artifactId>shiro-core</artifactId>
             <version>1.4.0</version>
         </dependency>
-        <!--Shiro控制ThymeLeaf界面按钮级权限控制-->
-        <dependency>
-            <groupId>com.github.theborakompanioni</groupId>
-            <artifactId>thymeleaf-extras-shiro</artifactId>
-            <version>2.0.0</version>
-        </dependency>
+
         <!-- shiro jar -->
         <!-- 邮箱服务 -->
         <dependency>

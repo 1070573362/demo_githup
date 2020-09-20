@@ -1,13 +1,16 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.springframework.org/schema/jdbc" xmlns:shiro="">
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <meta charset="utf-8">
-    <title>主页面</title>
+    <title>index</title>
     <script th:src="@{/js/apiUrl.js}"></script>
     <script th:src="@{/js/jquery/jquery.min.js}"></script>
-    <script th:src="@{/js/methodHelper.js}"></script>
     <script th:src="@{/js/common/layuiAdmin.js}"></script>
+    <script th:src="@{/js/common/encryption.js}"></script>
+    <script th:src="@{/js/methodHelper.js}"></script>
 </head>
+<body>
 
 <body class="layui-layout-body">
 <div id="LAY_app">
@@ -97,9 +100,8 @@
 <!--                    <dl class="layui-nav-child">-->
 <!--                    <dd><a href="javascript:;">用户中心</a>-->
 <!--                    <dl class="layui-nav-child">-->
-<!--                        <shiro:hasPermission name="sys:user:add">-->
-<!--                        <dd ><a lay-href="/html/user/page">用户管理</a></dd>-->
-<!--                        </shiro:hasPermission>-->
+
+<!--                        <dd shiro:hasPermission="sys:user:add" ><a lay-href="/html/user/page">用户管理</a></dd>-->
 <!--                       <dd ><a lay-href="/html/role/page">角色管理</a></dd>-->
 <!--                        <dd ><a lay-href="/html/menu/page">菜单栏管理</a></dd>-->
 <!--                    </dl>-->
