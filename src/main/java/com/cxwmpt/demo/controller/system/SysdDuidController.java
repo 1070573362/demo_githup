@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @date 2020/4/9
  */
 @Controller
-public class SystemController {
+public class SysdDuidController {
 
     /**
      * druid 数据监控页面

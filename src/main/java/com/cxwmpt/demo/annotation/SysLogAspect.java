@@ -38,7 +38,7 @@ public class SysLogAspect {
 
     private com.cxwmpt.demo.model.system.SysLog sysLog = null;
 
-    @Pointcut("@annotation(com.cxwmpt.demo.annotation.SysLog )")
+    @Pointcut("@annotation(com.cxwmpt.demo.annotation.SysLog)")
     public void webLog(){}
 
     @Before("webLog()")

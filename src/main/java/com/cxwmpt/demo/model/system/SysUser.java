@@ -3,6 +3,7 @@ package com.cxwmpt.demo.model.system;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import com.cxwmpt.demo.annotation.SysDict;
 import com.cxwmpt.demo.model.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -44,6 +45,7 @@ public class SysUser extends BaseEntity<SysUser> implements Serializable {
      * 性别  1:男2:女3:未知
      */
     @TableField(value = "sex")
+    @SysDict(dictCode = "sex")
     private String sex;
 
     /**

@@ -59,7 +59,7 @@ public class SysLogController {
 
         List<SysLog> list = sysLogService.list(wrapper);
         PageInfo<SysLog> info = new PageInfo<>(list);
-        return ResultMessage.success(info);
+        return ResultMessage.success(info.getList(), (int) info.getTotal());
     }
 
     /**

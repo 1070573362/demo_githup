@@ -43,6 +43,9 @@ public class ResultMessage<T> implements Serializable {
     public static <T> ResultMessage<T> success(String message,T data) {
         return create(true, 200, message,data,null,null);
     }
+    public static <T> ResultMessage<T> success(T data,Integer count) {
+        return create(true, 200, "success",data,count,null);
+    }
     public static <T> ResultMessage<T> success(String message,T data,Integer count,Integer total) {
         return create(true, 200, message,data,count,total);
     }

@@ -5,6 +5,7 @@ package com.cxwmpt.demo.controller.system;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
+import com.cxwmpt.demo.annotation.SysDict;
 import com.cxwmpt.demo.annotation.SysLog;
 import com.cxwmpt.demo.common.result.CodeEnum;
 import com.cxwmpt.demo.common.result.ResultCodeEnum;
@@ -75,7 +76,7 @@ public class SysUserController {
      * @return
      */
     @RequestMapping("/html/user/UpdatePasswordPage")
-    public String UpdatePassWordPage(Model model) {
+    public String updatePassWordPage(Model model) {
         return "systemSetup/userCenter/user/UpdatePasswordPage";
     }
 
@@ -124,7 +125,7 @@ public class SysUserController {
         //判断是否有分页数据传过来
         List<SysUser> list = sysUserService.AllList(map);
         PageInfo<SysUser> info = new PageInfo<>(list);
-        return ResultMessage.success(info);
+        return ResultMessage.success(info.getList(), (int) info.getTotal());
     }
 
 

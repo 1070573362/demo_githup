@@ -108,13 +108,13 @@
                 height: 'full-75', //高度最大化减去差值
                 where: data,
                 parseData: function (res) {
-                    //console.log(res)
+                    console.log(res)
                     //res 即为原始返回的数据
                     return {
                         "code": 0, //解析接口状态
                         "msg": 0, //解析提示文本
-                        "count": res.data.total, //解析数据长度
-                        "data": res.data.list //解析数据列表
+                        "count": res.count, //解析数据长度
+                        "data": res.data //解析数据列表
                     };
                 },
                 cols: [
@@ -124,7 +124,7 @@
                         {field: 'id', title: 'ID', width: 70, sort: true, fixed: 'left', hide: true},
                         {field: 'account', title: '用户账号', width: 120},
                         {field: 'username', title: '姓名', width: 120},
-                        {field: 'sex', title: '性别', width: 120},
+                        {field: 'sexShowText', title: '性别', width: 120},
                         {field: 'status', title: '状态', width: 120},
                         {field: 'mobile', title: '联系电话', width: 120},
                         {field: 'qq', title: 'QQ号码', width: 120},

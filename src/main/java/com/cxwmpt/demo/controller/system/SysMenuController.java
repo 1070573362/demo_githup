@@ -25,7 +25,7 @@ import static org.apache.shiro.SecurityUtils.getSubject;
 
 
 @Controller
-public class SystemMenuController {
+public class SysMenuController {
     @Autowired
     private SysMenuService sysMenuService;
 

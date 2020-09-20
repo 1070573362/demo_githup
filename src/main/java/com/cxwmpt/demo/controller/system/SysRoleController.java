@@ -97,9 +97,7 @@ public class SysRoleController {
         //判断是否有分页数据传过来
         List<SysRole> list = sysRoleService.AllList(map);
         PageInfo<SysRole> info = new PageInfo<>(list);
-        return ResultMessage.success(info);
-
-
+        return ResultMessage.success(info.getList(), (int) info.getTotal());
     }
     @RequestMapping("/api/auth/role/AllList")
     @ResponseBody
