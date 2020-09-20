@@ -44,12 +44,16 @@ import java.util.Map;
 @Aspect
 @Component
 public class SysDictAspect {
-    @Autowired
-    private SysDictCommentService sysDictCommentService;
+    private final SysDictCommentService sysDictCommentService;
+
+    public SysDictAspect(SysDictCommentService sysDictCommentService) {
+        this.sysDictCommentService = sysDictCommentService;
+    }
     /**
      * 字典后缀
      */
-    private static String DICT_TEXT_SUFFIX = "ShowText";
+    private static final String DICT_TEXT_SUFFIX = "ShowText";
+
 
     /**
      * 切点，切入 controller 子孙包下的所有类前缀为pageList所有方法
@@ -72,7 +76,7 @@ public class SysDictAspect {
         String method_name = pjp.getSignature().getName();
 
         Object result = pjp.proceed();
-        if(method_name=="pageList"){
+        if("pageList".equals(method_name)){
             this.parseDictText(result);
         }
 

@@ -69,7 +69,7 @@ public class SysLogController {
      */
     @PostMapping("/api/auth/log/deletes")
     @ResponseBody
-    public ResultMessage<Object> deletes(@RequestParam("ids[]") List<String> ids) {
+    public ResultMessage deletes(@RequestParam("ids[]") List<String> ids) {
         for (String id : ids) {
             sysLogService.removeById(id);
         }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.nuotadi.dao.system.SysDictIndexMapper">
+<mapper namespace="com.nuotadi.dao.system.SysDictCommentMapper">
   <resultMap id="BaseResultMap" type="com.cxwmpt.demo.model.system.SysDictComment">
     <!--@Table sys_dict_index-->
     <id column="id" jdbcType="VARCHAR" property="id" />

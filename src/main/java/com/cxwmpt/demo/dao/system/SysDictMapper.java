@@ -3,10 +3,14 @@ package com.cxwmpt.demo.dao.system;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cxwmpt.demo.model.system.SysDict;
 import com.cxwmpt.demo.model.system.SysDictComment;
-import com.cxwmpt.demo.model.system.SysLog;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
 
 /**
 * @program: backend
@@ -18,5 +22,6 @@ import org.springframework.stereotype.Repository;
 * @create: 2020-04-03 10:15
 **/
 @Repository
-public interface SysDictCommentMapper extends BaseMapper<SysDictComment> {
-}
+public interface SysDictMapper extends BaseMapper<SysDict> {
+    List<SysDict> AllList(@Param("map") Map map);
+    }

@@ -70,7 +70,7 @@ const apiUrl = {
         deletes: API_BASE_URL + '/api/auth/log/deletes', //删除日志
     },
     dict: {
-        datalist: API_BASE_URL + '/api/auth/sys/dict/datalist', //查询所有数据字典
+        pageList: API_BASE_URL + '/api/auth/dict/pageList',//分页显示和查询
         addIndexPage: API_BASE_URL + '/html/dict/addIndex', //跳转新增索引页面
         addDictPage: API_BASE_URL + '/html/dict/addDict', //跳转新增字典页面
         addIndex: API_BASE_URL + '/api/auth/sys/dict/index/add', //新增索引
