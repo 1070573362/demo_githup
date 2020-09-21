@@ -6,7 +6,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cxwmpt.demo.model.system.SysDictComment;
 import com.cxwmpt.demo.model.system.SysLog;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
 
 /**
 * @program: backend
@@ -19,4 +23,5 @@ import org.springframework.stereotype.Repository;
 **/
 @Repository
 public interface SysDictCommentMapper extends BaseMapper<SysDictComment> {
+    List<SysDictComment> AllList(@Param("map") Map map);
 }

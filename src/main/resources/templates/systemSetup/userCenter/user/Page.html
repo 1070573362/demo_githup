@@ -21,15 +21,21 @@
                 <div class="layui-card-body nepadmin-table-full">
                     <script type="text/html" id="addBar">
                         <div class="layui-btn-container">
-                            <button shiro:hasAnyPermissions="sys:user:add" class="layui-btn layui-btn-sm" lay-event="add">
-                                <i class='layui-icon layui-icon-add-circle'></i>新增
-                            </button>
-                            <button shiro:hasAnyPermissions="sys:user:edit" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="edit">
-                                <i class='layui-icon layui-icon-edit'></i>修改
-                            </button>
-                            <button shiro:hasAnyPermissions="sys:user:del" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del">
-                                <i class='layui-icon layui-icon-delete'></i>删除
-                            </button>
+                            <shiro:hasPermission name="sys:user:add">
+                                <button class="layui-btn layui-btn-sm" lay-event="add">
+                                    <i class='layui-icon layui-icon-add-circle'></i>新增
+                                </button>
+                            </shiro:hasPermission>
+                            <shiro:hasPermission name="sys:user:edit">
+                                <button  class="layui-btn layui-btn-sm layui-btn-normal" lay-event="edit">
+                                    <i class='layui-icon layui-icon-edit'></i>修改
+                                </button>
+                            </shiro:hasPermission>
+                            <shiro:hasPermission name="sys:user:del">
+                                <button  class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del">
+                                    <i class='layui-icon layui-icon-delete'></i>删除
+                                </button>
+                            </shiro:hasPermission>
                             <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="details">
                                 <i class='layui-icon layui-icon-read'></i>详情
                             </button>

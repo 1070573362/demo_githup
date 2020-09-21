@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.springframework.org/schema/jdbc" xmlns:shiro="">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
     <head>
         <meta charset="utf-8">
         <title>菜单管理</title>
@@ -30,17 +31,17 @@
                         <div class="layui-card-body nepadmin-table-full">
                             <script type="text/html" id="addBar">
                                 <div class="layui-btn-container">
-                                    <shiro:hasPermission name="sys:menu:add123">
+                                    <shiro:hasPermission name="sys:menu:add">
                                         <button class="layui-btn layui-btn-sm" lay-event="add">
                                             <i class='layui-icon layui-icon-add-circle'></i>新增
                                         </button>
                                     </shiro:hasPermission>
-                                    <shiro:hasPermission name="sys:menu:edit456">
+                                    <shiro:hasPermission name="sys:menu:edit">
                                         <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="edit">
                                             <i class='layui-icon layui-icon-edit'></i>修改
                                         </button>
                                     </shiro:hasPermission>
-                                    <shiro:hasPermission name="sys:menu:del789">
+                                    <shiro:hasPermission name="sys:menu:del">
                                         <button permission="sys:user:delete"
                                                 class="layui-btn layui-btn-sm layui-btn-danger"
                                                 lay-event="del">

@@ -70,15 +70,16 @@ const apiUrl = {
         deletes: API_BASE_URL + '/api/auth/log/deletes', //删除日志
     },
     dict: {
+        addPage: API_BASE_URL + '/html/dict/addPage',//新增页面
+        updatePage: API_BASE_URL + '/html/dict/updatePage',//修改页面
         pageList: API_BASE_URL + '/api/auth/dict/pageList',//分页显示和查询
-        addIndexPage: API_BASE_URL + '/html/dict/addIndex', //跳转新增索引页面
-        addDictPage: API_BASE_URL + '/html/dict/addDict', //跳转新增字典页面
-        addIndex: API_BASE_URL + '/api/auth/sys/dict/index/add', //新增索引
-        addDict: API_BASE_URL + '/api/auth/sys/dict/add', //新增字典
-        select: API_BASE_URL + '/api/auth/sys/dict/index/select',  //查询字典索引
-        delete: API_BASE_URL + '/api/auth/sys/dict/delete', //删除字典
-        updatePage: API_BASE_URL + '/html/dict/UpdatePage', //跳转修改页面
-        updateDict: API_BASE_URL + '/api/auth/sys/dict/UpdateDict', //修改字典
+        save: API_BASE_URL + '/api/auth/dict/save', //新增和修改字典
+    },
+    dictComment: {
+        addPage: API_BASE_URL + '/html/dictComment/addPage',//新增页面
+        updatePage: API_BASE_URL + '/html/dictComment/updatePage',//修改页面
+        pageList: API_BASE_URL + '/api/auth/dictComment/pageList',//分页显示和查询
+        save: API_BASE_URL + '/api/auth/dictComment/save', //新增和修改字典
     },
     photo: {
         UploadImage: API_BASE_URL + '/PhotoUpload/UploadImage',
