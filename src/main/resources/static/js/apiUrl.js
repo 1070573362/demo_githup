@@ -74,12 +74,14 @@ const apiUrl = {
         updatePage: API_BASE_URL + '/html/dict/updatePage',//修改页面
         pageList: API_BASE_URL + '/api/auth/dict/pageList',//分页显示和查询
         save: API_BASE_URL + '/api/auth/dict/save', //新增和修改字典
+        deletes: API_BASE_URL + '/api/auth/dict/deletes',//批量删除
     },
     dictComment: {
         addPage: API_BASE_URL + '/html/dictComment/addPage',//新增页面
         updatePage: API_BASE_URL + '/html/dictComment/updatePage',//修改页面
         pageList: API_BASE_URL + '/api/auth/dictComment/pageList',//分页显示和查询
         save: API_BASE_URL + '/api/auth/dictComment/save', //新增和修改字典
+        deletes: API_BASE_URL + '/api/auth/dictComment/deletes',//批量删除
     },
     photo: {
         UploadImage: API_BASE_URL + '/PhotoUpload/UploadImage',

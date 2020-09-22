@@ -38,11 +38,11 @@
                                 <i class='layui-icon layui-icon-delete'></i>删除
                             </button>
                         </shiro:hasPermission>
-
-                            <button class="layui-btn layui-btn-sm layui-btn-pink" lay-event="config">
+                        <shiro:hasPermission name="sys:dict:config">
+                            <button  class="layui-btn layui-btn-sm layui-btn-pink" lay-event="config">
                                 <i class='layui-icon layui-icon-set-sm'></i>配置
                             </button>
-
+                        </shiro:hasPermission>
                         <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="details">
                             <i class='layui-icon layui-icon-read'></i>详情
                         </button>
@@ -65,17 +65,17 @@
                 <div class="layui-card-body nepadmin-table-full">
                     <script type="text/html" id="addBar1">  <!--数据表格上方操作框-->
                     <div class="layui-btn-container">
-                        <shiro:hasPermission name="sys:dict:add">
+                        <shiro:hasPermission name="sys:dictComment:add">
                             <button class="layui-btn layui-btn-sm" lay-event="add">
                                 <i class='layui-icon layui-icon-add-circle'></i>新增
                             </button>
                         </shiro:hasPermission>
-                        <shiro:hasPermission name="sys:dict:edits">
+                        <shiro:hasPermission name="sys:dictComment:edit">
                             <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="edit">
                                 <i class='layui-icon layui-icon-edit'></i>修改
                             </button>
                         </shiro:hasPermission>
-                        <shiro:hasPermission name="sys:dict:del">
+                        <shiro:hasPermission name="sys:dictComment:del">
                             <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del">
                                 <i class='layui-icon layui-icon-delete'></i>删除
                             </button>
@@ -90,13 +90,10 @@
                     </div>
                     </script>
                     <table id="dataTable1" lay-filter="dataTable1"></table> <!--数据表格-->
-
                 </div>
             </div>
-
         </div>
     </div>
-
 </div>
 
 
@@ -191,6 +188,11 @@
             return false;
         });
 
+        //监听行双击事件
+        table.on('rowDouble(dataTable)', function(obj){
+            selectDictId= obj.data.id;
+            reloadTable1(null);
+        });
         //监听表格头部工具
         table.on('toolbar(dataTable)', function (obj) {
             //获取选中数据
@@ -254,7 +256,7 @@
                         }
                         layer.confirm('您确定要删除条菜单包括他的子菜单吗？', function (index) {
                             let loadIndex = layer.load(2);
-                            $.post(apiUrl.user.deletes, {ids: arr}, function (res) {
+                            $.post(apiUrl.dict.deletes, {ids: arr}, function (res) {
                                 if (res.code === 200) {
                                     layer.msg("操作成功", {icon: 6});
                                     layer.close(loadIndex);
@@ -267,7 +269,7 @@
                         });
                     }
                     break;
-                case 'config'://修改
+                case 'config'://审查
                     if (data.length === 0) {
                         layer.alert('必须选择一条数据', {icon: 2});
                     } else if (data.length > 1) {
@@ -280,6 +282,92 @@
                     break;
                 case 'refresh'://刷新
                     reloadTable(null);
+                    break;
+                default:
+            }
+        });
+        //监听表格头部工具
+        table.on('toolbar(dataTable1)', function (obj) {
+            if(Util.isEmpty(selectDictId)){
+                layer.msg("请先选中字典数据", {icon: 5});
+                return;
+            }
+            //获取选中数据
+            let checkStatus = table.checkStatus('dataList1')//数据表加载后的Id
+                , data = checkStatus.data;
+            let arr = [];
+            switch (obj.event) {
+                case 'add'://添加
+                    layer.open({
+                        type: 2,//1是div 2是html
+                        title: '新增信息',
+                        content: apiUrl.dictComment.addPage+"?selectDictId="+selectDictId,
+                        shade: [0.9, '#393D49'],
+                        area: ['100%', '100%'],
+                        closeBtn: 1,//不显示则closeBtn: 0
+                        shadeClose: false,//点击弹层外区域关闭弹框
+                        // time: 300000,//默认关闭毫秒数
+                        //anim: 2,//弹出动画
+                        // , maxmin: true//最大小化按钮
+                        fixed: true,//固定在可视区域
+                        end: function () {//销毁此页面回调
+                            //调用此方法重载table
+                            reloadTable1();
+                        },
+                    });
+                    break;
+                case 'edit'://修改
+                    if (data.length === 0) {
+                        layer.alert('必须选择一条数据', {icon: 2});
+                    } else if (data.length > 1) {
+                        layer.alert('只能选择一条数据进行编辑', {icon: 2});
+                    } else {
+                        arr[0] = data[0].id;
+                        layer.open({
+                            type: 2,
+                            title: '修改信息',
+                            content: apiUrl.dictComment.updatePage +'?action=edit&id=' + arr[0],
+                            area: ['100%', '100%'],
+                            // , offset: '10px'
+                            closeBtn: 1,//不显示则closeBtn: 0
+                            shade: [0.9, '#393D49'],
+                            // , shadeClose: true//点击弹层外区域关闭弹框
+                            // time: 300000 ,//默认关闭毫秒数
+                            //anim: 2  ,//弹出动画
+                            // , maxmin: true//最大小化按钮
+                            fix: false,//固定在可视区域
+                            end: function () {//销毁此页面回调
+                                reloadTable1();
+                            },
+                        });
+                    }
+                    break;
+                case 'del'://删除
+                    if (data.length === 0) {
+                        layer.msg("对不起，您没有选择数据，请勾选数据", {icon: 5});
+
+                    } else {
+                        for (let i = 0; i < data.length; i++) //删除数据得到合同编号
+                        {
+                            arr[i] = data[i].id;
+                        }
+                        layer.confirm('您确定要删除条菜单包括他的子菜单吗？', function (index) {
+                            let loadIndex = layer.load(2);
+                            $.post(apiUrl.dictComment.deletes, {ids: arr}, function (res) {
+                                if (res.code === 200) {
+                                    layer.msg("操作成功", {icon: 6});
+                                    layer.close(loadIndex);
+                                    reloadTable1();
+                                } else {
+                                    layer.msg(res.message, {icon: 5});
+                                    layer.close(loadIndex);
+                                }
+                            });
+                        });
+                    }
+                    break;
+                case 'refresh'://刷新
+                    reloadTable1(null);
                     break;
                 default:
             }

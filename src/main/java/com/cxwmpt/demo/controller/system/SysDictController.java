@@ -108,8 +108,20 @@ public class SysDictController {
     public ResultMessage save(SysDict sysDict) {
         //获取登录人信息
         SysUser loginUser = (SysUser) getSubject().getPrincipal();
+        //查询有没有重复的字段
+        QueryWrapper<SysDict> wrapper = new QueryWrapper<>();
+        wrapper.eq("code", sysDict.getCode());
+        wrapper.eq("del_flag", false);
+        int count = sysDictService.count(wrapper);
         //添加新用户验证loginID是否相同
         if (StringUtils.isNotBlank(sysDict.getId())) {
+            //原数据库数据
+            SysDict old = sysDictService.getById(sysDict.getId());
+            if (!sysDict.getCode().equals(old.getCode())) {
+                if (count != 0) {
+                    return ResultMessage.error(-1, "对不起，你修改的编号重复，请重新创建");
+                }
+            }
             //修改
             sysDict.setUpdateId(loginUser.getId());
             if (sysDictService.updateById(sysDict)) {
@@ -118,6 +130,9 @@ public class SysDictController {
             return ResultMessage.error(ResultCodeEnum.UPDATE_DATE_ERROR);
         } else {
             //新增
+            if (count != 0) {
+                return ResultMessage.error(-1, "对不起，你创建的编号重复，请重新创建");
+            }
             sysDict.setCreateId(loginUser.getId());
             if(sysDictService.save(sysDict)){
                 return ResultMessage.success();

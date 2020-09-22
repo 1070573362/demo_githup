@@ -25,9 +25,14 @@
     from sys_dict_comment
     <where>
       1=1 and del_flag=false
-      <if test='map.selectDictId!=""&amp;&amp; map.selectDictId!=null'>
-        and dict_code in (select code from  sys_dict where id=#{map.selectDictId})
-      </if>
+      <choose>
+        <when test='map.selectDictId!=""&amp;&amp; map.selectDictId!=null'>
+          and dict_code in (select code from  sys_dict where id=#{map.selectDictId})
+        </when>
+        <otherwise>
+          and 1=0
+        </otherwise>
+      </choose>
     </where>
     order by  create_date desc
   </select>
