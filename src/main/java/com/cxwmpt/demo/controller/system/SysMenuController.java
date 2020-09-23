@@ -74,7 +74,7 @@ public class SysMenuController {
 
 
     /**
-     * 获取登录人要显示的菜单
+     * 获取登录人要显示的菜单(只查询角色状态为0的角色)
      */
     @RequestMapping("/api/auth/menu/listLoginInfoMenu")
     @ResponseBody

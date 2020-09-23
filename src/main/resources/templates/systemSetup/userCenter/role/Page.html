@@ -126,18 +126,7 @@
                         {unresize: true, fixed: 'left', title: '序号', type: 'numbers', width: 70},
                         {field: 'id', title: 'ID', width: 70, sort: true, fixed: 'left', hide: true},
                         {field: 'roleName', title: '角色名'},
-                        {
-                            field: 'status', title: '状态', templet: function (val) {
-                                switch (val.status) {
-                                    case "0":
-                                        return "<span class='layui-badge layui-bg-red'>停用</span>";
-                                    case "1":
-                                        return "<span class='layui-badge layui-bg-green '>正常</span>";
-                                    default:
-                                        return "<span>未定义</span>";
-                                }
-                            }
-                        },
+                        {field: 'statusShowText', title: '状态', width: 120},
                         {field: 'remark', title: '备注'},
                         {field: 'createDate', title: '创建时间'},
                         {field: 'updateDate', title: '修改时间'},

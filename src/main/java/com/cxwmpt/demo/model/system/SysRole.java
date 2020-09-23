@@ -3,6 +3,7 @@ package com.cxwmpt.demo.model.system;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import com.cxwmpt.demo.annotation.SysDict;
 import com.cxwmpt.demo.model.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -31,9 +32,10 @@ public class SysRole extends BaseEntity implements Serializable {
     private String roleName;
 
     /**
-     * 当前状态 1启用 0禁用
+     * 当前状态 0启用 1禁用
      */
     @TableField(value = "status")
+    @SysDict(dictCode = "status")
     private String status;
 
     /**

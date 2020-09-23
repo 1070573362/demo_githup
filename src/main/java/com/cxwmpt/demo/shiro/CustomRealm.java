@@ -65,7 +65,7 @@ public class CustomRealm extends AuthorizingRealm {
 
             throw new ApiException(ResultCodeEnum.PASSWORD_ERROR);
         }
-        if (!user.getStatus().equals("1")) {
+        if (!user.getStatus().equals("0")) {
 
             throw new ApiException(ResultCodeEnum.STATUS_ERROR);
         }

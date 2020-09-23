@@ -9,6 +9,7 @@ import com.cxwmpt.demo.common.util.ToolUtil;
 import com.cxwmpt.demo.model.system.SysDictComment;
 import com.cxwmpt.demo.model.system.SysUser;
 import com.cxwmpt.demo.service.api.system.SysDictCommentService;
+import com.cxwmpt.demo.service.api.system.SysDictService;
 import com.cxwmpt.demo.service.api.system.SysLogService;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -45,9 +46,10 @@ import java.util.Map;
 @Component
 public class SysDictAspect {
     private final SysDictCommentService sysDictCommentService;
-
-    public SysDictAspect(SysDictCommentService sysDictCommentService) {
+    private final SysDictService sysDictService;
+    public SysDictAspect(SysDictCommentService sysDictCommentService,SysDictService sysDictService) {
         this.sysDictCommentService = sysDictCommentService;
+        this.sysDictService=sysDictService;
     }
     /**
      * 字典后缀
@@ -137,14 +139,26 @@ public class SysDictAspect {
         }
     }
     private String translateDictValue(String dictCode, String code) {
+
+
+
      //如果key为空直接返回就好了
-        if (ObjConvertUtils.isEmpty(code)) {
+        if (ObjConvertUtils.isEmpty(dictCode)||ObjConvertUtils.isEmpty(code)) {
             return null;
         }
+        //判断字典是否启动
+        QueryWrapper<com.cxwmpt.demo.model.system.SysDict> SysDictwrapper = new QueryWrapper<>();
+        SysDictwrapper.eq("code",dictCode);
+        SysDictwrapper.eq("status","0");
+        SysDictwrapper.eq("del_flag", false);
+         int count= sysDictService.count(SysDictwrapper);
+         if(count==0){
+             return null;
+         }
         StringBuffer textValue = new StringBuffer();
-//分割 key 值
+          //分割 key 值
         String[] keys = code.split(",");
-//循环 keys 中的所有值
+       //循环 keys 中的所有值
         for (String k : keys) {
             String tmpValue = null;
             System.out.println(" 字典 key : " + k);

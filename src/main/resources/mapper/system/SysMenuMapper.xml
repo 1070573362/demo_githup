@@ -73,7 +73,7 @@
         SELECT
         <include refid="listLoginInfoMenu_columns"/>
         FROM sys_menu where id in(SELECT  sys_menu.id from(SELECT sys_role_menu.menu_id from (SELECT sys_user_role.role_id from (SELECT id FROM sys_user where id=#{id} and del_flag=false )sys_user
-        LEFT JOIN (SELECT * from sys_user_role where del_flag=false)sys_user_role  on sys_user_role.user_id= sys_user.id)sys
+        LEFT JOIN (SELECT sys_user_role.* from sys_user_role right JOIN (SELECT * from sys_role where  status="0" and   del_flag=false )sys_role on sys_role.id=sys_user_role.role_id   where    sys_user_role.del_flag=false )sys_user_role  on sys_user_role.user_id= sys_user.id)sys
         LEFT JOIN (SELECT * FROM sys_role_menu where del_flag=false)sys_role_menu  on sys_role_menu.role_id=sys.role_id  group by sys_role_menu.menu_id)sys
         LEFT JOIN (select * FROM sys_menu where del_flag=false)sys_menu on sys_menu.id=sys.menu_id)
         and type='0' and del_flag=false
