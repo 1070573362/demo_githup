@@ -38,6 +38,11 @@ public class SysDictComment extends BaseEntity<SysDictComment> implements Serial
      */
     @TableField(value = "name")
     private String name;
+    /**
+     * 排序号
+     */
+    @TableField(value = "sort")
+    private Integer sort;
 
     /**
      * 备注

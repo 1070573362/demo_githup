@@ -145,8 +145,8 @@
             <artifactId>shiro-core</artifactId>
             <version>1.4.0</version>
         </dependency>
-
         <!-- shiro jar -->
+
         <!-- 邮箱服务 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

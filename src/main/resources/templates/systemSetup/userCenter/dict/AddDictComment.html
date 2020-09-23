@@ -91,7 +91,7 @@
         form.on('submit(btnSubmit)', function (data) {
             debugger
             let loadIndex = layer.load(2);
-            $.post(apiUrl.dictComment.addPage, data.field, function (res) {
+            $.post(apiUrl.dictComment.save, data.field, function (res) {
                 if (res.code === 200) {
                     //获取当前页面关闭，关闭form弹框
                     let index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引

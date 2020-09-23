@@ -38,6 +38,7 @@ public class SysDict extends BaseEntity<SysDict> implements Serializable {
      * 当前状态(0:正常;1:禁用)
      */
     @TableField(value = "status")
+    @com.cxwmpt.demo.annotation.SysDict(dictCode = "status")
     private String status;
 
     /**

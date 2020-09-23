@@ -49,9 +49,10 @@ public class SysUser extends BaseEntity<SysUser> implements Serializable {
     private String sex;
 
     /**
-     * 用户状态 1:正常2:停用 3:锁定
+     * 用户状态 0:正常1:停用 2:锁定
      */
     @TableField(value = "status")
+    @SysDict(dictCode = "status")
     private String status;
 
     /**

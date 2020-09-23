@@ -19,6 +19,7 @@
                 <fieldset class="layui-elem-field layui-field-title">
                     <legend>基本信息</legend>
                 </fieldset>
+                <input type="hidden" name="id" id="id">
                 <div class="layui-row layui-col-space10 layui-form-item ">
                     <div class="layui-inline">
                         <label class="layui-form-label">字典编码<span style="color: #FF5722">*</span></label>
@@ -93,7 +94,6 @@
             });
             form.render(); //更新全部
         }
-
         //监听保存按钮
         form.on('submit(btnSubmit)', function (data) {
             let loadIndex = layer.load(2);
@@ -112,9 +112,6 @@
             return false;
         });
     });
-
-
-
 </script>
 
 </body>

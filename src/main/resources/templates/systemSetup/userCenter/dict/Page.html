@@ -138,7 +138,7 @@
                         {field: 'name', title: '名称', minWidth: 80},
                         {field: 'statusShowTxt', title: '状态', minWidth: 80},
                         {field: 'sort', title: '排序号', width: 150},
-                        {field:'createDate', minWidth:'200',  title: '操作时间',unresize: true, sort: true}, //单元格内容水平居中
+                        {field:'updateDate', minWidth:'200',  title: '操作时间',unresize: true, sort: true}, //单元格内容水平居中
                     ]
                 ]
             });
@@ -175,9 +175,8 @@
                         {field: 'dictCode', title: '所属字典', minWidth: 80},
                         {field: 'code', title: '字典编码', minWidth: 80},
                         {field: 'name', title: '字典名称', minWidth: 80},
-                        {field: 'statusShowTxt', title: '状态', minWidth: 80},
                         {field: 'sort', title: '排序号', width: 150},
-                        {field:'createDate', minWidth:'200',  title: '操作时间',unresize: true, sort: true}, //单元格内容水平居中
+                        {field:'updateDate', minWidth:'200',  title: '操作时间',unresize: true, sort: true}, //单元格内容水平居中
                     ]
                 ]
             });
@@ -351,7 +350,7 @@
                         {
                             arr[i] = data[i].id;
                         }
-                        layer.confirm('您确定要删除条菜单包括他的子菜单吗？', function (index) {
+                        layer.confirm('您确定要删除这条数据吗？', function (index) {
                             let loadIndex = layer.load(2);
                             $.post(apiUrl.dictComment.deletes, {ids: arr}, function (res) {
                                 if (res.code === 200) {
