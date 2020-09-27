@@ -147,6 +147,12 @@
         </dependency>
         <!-- shiro jar -->
 
+
+        <!--spring boot集成quartz-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-quartz</artifactId>
+        </dependency>
         <!-- 邮箱服务 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

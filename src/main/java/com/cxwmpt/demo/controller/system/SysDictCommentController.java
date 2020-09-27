@@ -92,7 +92,7 @@ public class SysDictCommentController {
 
     @RequestMapping("/api/auth/dictComment/save")
     @ResponseBody
-    @SysLog("保存菜单信息")
+    @SysLog("保存信息")
     public ResultMessage save(SysDictComment sysDictComment) {
         //获取登录人信息
         SysUser loginUser = (SysUser) getSubject().getPrincipal();
