@@ -1,4 +1,4 @@
-package com.cxwmpt.demo.controller.base;
+package com.cxwmpt.demo.controller.system;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cxwmpt.demo.common.result.ResultMessage;
@@ -21,7 +21,7 @@ import java.util.Map;
 
 
 @Controller
-public class QuartzJobController {
+public class SysJobController {
 
     @Autowired
     private SysJobService jobService;
@@ -30,8 +30,8 @@ public class QuartzJobController {
     private QuartzManager quartzManager;
 
     @GetMapping("html/job/Page")
-    public String list() {
-        return "system/job/Page";
+    public String page() {
+        return "systemSetup/userCenter/job/Page";
     }
 
     @GetMapping("html/job/AddPage")
@@ -52,22 +52,17 @@ public class QuartzJobController {
 
     /**
      * 查询任务列表
-     * @param params
+     * @param map
      * @return
      */
-    @PostMapping("api/auth/system/job/datalist")
+    @PostMapping("/api/auth/job/pageList")
     @ResponseBody
-    public ResultMessage datalist(@RequestParam Map<String, Object> params) {
+    public ResultMessage pageList(@RequestParam Map<String, Object> map) {
 
-        PageHelper.startPage(Integer.parseInt(params.get("page").toString()),Integer.parseInt(params.get("limit").toString()));
+        PageHelper.startPage(Integer.parseInt(map.get("page").toString()),Integer.parseInt(map.get("limit").toString()));
+        
 
-        QueryWrapper<SysJob> wrapper = new QueryWrapper<>();
-
-        if (params.containsKey("jobName") && !("").equals(params.get("jobName").toString())) {
-            wrapper.eq("job_name", params.get("jobName").toString());
-        }
-
-        List<SysJob> list = jobService.list(wrapper);
+        List<SysJob> list = jobService.AllList(map);
 
         PageInfo<SysJob> info = new PageInfo<>(list);
 

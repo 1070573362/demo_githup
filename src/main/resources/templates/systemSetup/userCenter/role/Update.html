@@ -31,8 +31,8 @@
                                 <label class="layui-form-label">状态<span style="color: #FF5722">*</span></label>
                                 <div class="layui-input-inline">
                                     <select name="status" lay-search="">
-                                        <option value="1">启用</option>
-                                        <option value="2">禁用</option>
+                                        <option value="0" selected>正常</option>
+                                        <option value="1">禁用</option>
                                     </select>
                                 </div>
                             </div>
@@ -97,8 +97,8 @@
                     }
                 },
             });
-
         });
+        console.log([[${entity}]])
             form.val('formFilter', {
                 "id": [[${entity.id}]], // "name": "value"
                 "roleName": [[${entity.roleName}]],

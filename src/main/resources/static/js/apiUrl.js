@@ -83,6 +83,19 @@ const apiUrl = {
         save: API_BASE_URL + '/api/auth/dictComment/save', //新增和修改字典
         deletes: API_BASE_URL + '/api/auth/dictComment/deletes',//批量删除
     },
+    //定时任务
+    job: {
+        pageList: API_BASE_URL + '/api/auth/job/pageList', //查询定时任务列表
+        addPage: API_BASE_URL + '/html/job/AddPage', //跳转新增页面
+        addJob: API_BASE_URL + '/api/auth/system/job/add', //新增定时任务
+        delete: API_BASE_URL + '/api/auth/system/job/delete', //删除定时任务
+        updatePage: API_BASE_URL + '/html/job/UpdatePage', //跳转修改详情页面
+        updateJob: API_BASE_URL + '/api/auth/system/job/update',//修改定时任务信息
+        stop: API_BASE_URL + '/api/auth/system/job/pasueOneJob',//暂停一个任务
+        restart: API_BASE_URL + '/api/auth/system/job/resOneJob',//重启一个任务
+        stopAll: API_BASE_URL + '/api/auth/system/job/stopAll',//关闭所有定时任务
+        startAll: API_BASE_URL + '/api/auth/system/job/startAll',//启动所有定时任务
+    },
     photo: {
         UploadImage: API_BASE_URL + '/PhotoUpload/UploadImage',
     },
