@@ -1,5 +1,6 @@
 package com.cxwmpt.demo.quartzJob;
 
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
@@ -8,7 +9,9 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 public class TestJob extends QuartzJobBean {
 
     @Override
-    protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        System.out.println("hhhhhhhh");
+    protected void executeInternal(JobExecutionContext jobExecutionContext)  {
+        // 获取参数
+        JobDataMap jobDataMap = jobExecutionContext.getJobDetail().getJobDataMap();
+        System.out.println("Quartz ---->  Hello, ");
     }
 }

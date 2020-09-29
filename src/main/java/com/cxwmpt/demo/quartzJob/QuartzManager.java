@@ -4,217 +4,209 @@ package com.cxwmpt.demo.quartzJob;
 import com.cxwmpt.demo.model.system.SysJob;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 
+import java.util.*;
+
+/**
+ * @author Administrator
+ */
 @Component
 @Slf4j
 public class QuartzManager {
 
-    //注入调度器
-    @Autowired
-    private Scheduler scheduler;
-
-
-
     /**
-     * @Description: 添加一个定时任务，使用默认的任务组名，触发器名，触发器组名
-     *
-     * @param myJob
-     *
+     * 注入调度器
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public  void addJob(SysJob myJob, Class cls) {
-        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>method:addJob  start");
-        try {
-            // 唯一主键
-            String jobName = myJob.getJobName();
-            String jobGroup = myJob.getJobGroup();
-            TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
-            if(scheduler==null){
-                log.info("scheduler is null");
-            }
-            CronTrigger cronTrigger = (CronTrigger) scheduler.getTrigger(triggerKey);
-            if (null == cronTrigger) {
-                JobDetail jobDetail = JobBuilder.newJob(cls).withIdentity(jobName,jobGroup).build();
+    private final Scheduler scheduler;
 
-                cronTrigger = TriggerBuilder.newTrigger().withIdentity(jobName, jobGroup)
-                        .withSchedule(CronScheduleBuilder.cronSchedule(myJob.getCronExpression())).build();
-//						cronTrigger.getJobDataMap().put("jobEntity", myJob);
 
-                scheduler.scheduleJob(jobDetail, cronTrigger);
-                //启动一个定时器
-                if (!scheduler.isShutdown()) {
-                    scheduler.start();
-                }
-            } else {
-                cronTrigger = cronTrigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(CronScheduleBuilder.cronSchedule(myJob.getCronExpression()))
-                        .build();
-                scheduler.rescheduleJob(triggerKey, cronTrigger);
-            }
-            //等待启动完成
-//			Thread.sleep(TimeUnit.SECONDS.toMillis(10));
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.info("定时任务启动失败：" + e.getMessage());
-        }
-        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>method:addJob  end");
+    public QuartzManager(Scheduler scheduler) {
+        this.scheduler = scheduler;
     }
 
     /**
-     * @Description: 暂停一个任务
+     * 添加一个定时任务，使用默认的任务组名，触发器名，触发器组名
+     * "0 * * * * ?"
      *
-     * @param myJob
-     *
+     * @param jobClass
+     * @param sysJob
+     * @param jobData
      */
-    public  void pasueOneJob(SysJob myJob) {
-        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>method:pasueOneJob  start");
+    public void addJob(Class jobClass, SysJob sysJob, Map jobData) {
         try {
-            // 唯一主键
-            String jobName = myJob.getJobName();
-            String jobGroup = myJob.getJobGroup();
-            TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
-            Trigger trigger = scheduler.getTrigger(triggerKey);
-//			if(null==trigger){
-//				log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>method:removeJob trigger is NULL ");
-//				return;
-//			}
-            JobKey jobKey = trigger.getJobKey();
+            // 创建jobDetail实例，绑定Job实现类
+            // 指明job的名称，所在组的名称，以及绑定job类
+            // 任务名称和组构成任务key
+            JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(sysJob.getJobName(), sysJob.getJobGroup())
+                    .build();
+            // 设置job参数
+            if (jobData != null && jobData.size() > 0) {
+                jobDetail.getJobDataMap().putAll(jobData);
+            }
+            // 定义调度触发规则
+            // 使用cornTrigger规则
+            // 触发器key
+            Trigger trigger = TriggerBuilder.newTrigger().withIdentity(sysJob.getJobName(), sysJob.getJobGroup())
+                    .startAt(DateBuilder.futureDate(1, DateBuilder.IntervalUnit.SECOND))
+                    .withSchedule(CronScheduleBuilder.cronSchedule(sysJob.getCronExpression())).startNow().build();
+            // 把作业和触发器注册到任务调度中
+            scheduler.scheduleJob(jobDetail, trigger);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 修改 一个job的 时间表达式
+     */
+    public void updateJob(SysJob sysJob) {
+        try {
+            TriggerKey triggerKey = TriggerKey.triggerKey(sysJob.getJobName(), sysJob.getJobGroup());
+            CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
+            trigger = trigger.getTriggerBuilder().withIdentity(triggerKey)
+                    .withSchedule(CronScheduleBuilder.cronSchedule(sysJob.getCronExpression())).build();
+            // 重启触发器
+            scheduler.rescheduleJob(triggerKey, trigger);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
+     * 删除任务一个job
+     */
+    public void deleteJob(SysJob sysJob) {
+        try {
+            scheduler.deleteJob(new JobKey(sysJob.getJobName(), sysJob.getJobGroup()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 暂停一个job
+     */
+    public void stopJob(SysJob sysJob) {
+        try {
+            JobKey jobKey = JobKey.jobKey(sysJob.getJobName(), sysJob.getJobGroup());
             scheduler.pauseJob(jobKey);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>method:pasueOneJob  end");
     }
 
     /**
-     * @Description: 重启一个任务
-     *
-     * @param myJob
-     *
+     * 重启一个job
+     * @param sysJob
      */
-    public  void resOneJob(SysJob myJob) {
-        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>method:resOneJob  start");
+    public void restartJob(SysJob sysJob) {
+
         try {
-            // 唯一主键
-            String jobName = myJob.getJobName();
-            String jobGroup = myJob.getJobGroup();
-            TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
+            TriggerKey triggerKey = TriggerKey.triggerKey(sysJob.getJobName(), sysJob.getJobGroup());
             Trigger trigger = scheduler.getTrigger(triggerKey);
-//			if(null==trigger){
-//				log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>method:removeJob trigger is NULL ");
-//				return;
-//			}
             scheduler.rescheduleJob(triggerKey, trigger);
-//			Thread.sleep(TimeUnit.MINUTES.toMillis(10));
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>method:resOneJob  end");
+
     }
 
     /**
-     * @Description: 修改一个任务的触发时间
-     *
+     * 恢复一个job
      */
-    public  void modifyJobTime(SysJob myJob, String time) {
-        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>method:modifyJobTime  start");
+    public void recoveryJob(SysJob sysJob) {
         try {
-            // 唯一主键
-            String jobName = myJob.getJobName();
-            String jobGroup = myJob.getJobGroup();
-            TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
-            CronTrigger cronTrigger = (CronTrigger) scheduler.getTrigger(triggerKey);
-            myJob.setCronExpression(time);
-            CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(myJob.getCronExpression());
-            cronTrigger = cronTrigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(cronScheduleBuilder)
-                    .build();
-            scheduler.rescheduleJob(triggerKey, cronTrigger);
-
-//			Thread.sleep(TimeUnit.MINUTES.toMillis(60));
+            JobKey jobKey = JobKey.jobKey(sysJob.getJobName(), sysJob.getJobGroup());
+            scheduler.resumeJob(jobKey);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>method:modifyJobTime  end");
     }
 
     /**
-     * @Description: 移除一个任务(使用默认的任务组名，触发器名，触发器组名)
-     *
-     *
+     * 立即执行一个job
      */
-    public  void removeJob(SysJob myJob) {
-        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>method:removeJob  start");
+    public void runJob(SysJob sysJob) {
         try {
-            // 唯一主键
-            String jobName = myJob.getJobName();
-            String jobGroup = myJob.getJobGroup();
-            TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
-            Trigger trigger = scheduler.getTrigger(triggerKey);
-            if(null==trigger){
-                log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>method:removeJob trigger is NULL ");
-                return;
-            }
-            JobKey jobKey = trigger.getJobKey();
-            scheduler.pauseTrigger(triggerKey);// 停止触发器
-            scheduler.unscheduleJob(triggerKey);// 移除触发器
-            scheduler.deleteJob(jobKey);// 删除任务
-
-            //Thread.sleep(TimeUnit.MINUTES.toMillis(10));
+            JobKey jobKey = JobKey.jobKey(sysJob.getJobName(), sysJob.getJobGroup());
+            scheduler.triggerJob(jobKey);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>method:removeJob  end");
     }
 
     /**
+     * 获取所有计划中的任务列表
      *
-     * 方法表述  获得执行器状态
      * @return
-     * String
      */
-    public  String getStatus(SysJob myJob){
-        String state = "NONE";
+    public List<Map<String, Object>> queryAllJob() {
+        List<Map<String, Object>> jobList = null;
         try {
-            // 唯一主键
-            String jobName = myJob.getJobName();
-            String jobGroup = myJob.getJobGroup();
-            TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
-            //trigger state
-            Trigger.TriggerState triggerState = scheduler.getTriggerState(triggerKey);
-            state = triggerState.toString();
+            GroupMatcher<JobKey> matcher = GroupMatcher.anyJobGroup();
+            Set<JobKey> jobKeys = scheduler.getJobKeys(matcher);
+            jobList = new ArrayList<Map<String, Object>>();
+            for (JobKey jobKey : jobKeys) {
+                List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
+                for (Trigger trigger : triggers) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("jobName", jobKey.getName());
+                    map.put("jobGroupName", jobKey.getGroup());
+                    map.put("description", "触发器:" + trigger.getKey());
+                    Trigger.TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
+                    map.put("jobStatus", triggerState.name());
+                    if (trigger instanceof CronTrigger) {
+                        CronTrigger cronTrigger = (CronTrigger) trigger;
+                        String cronExpression = cronTrigger.getCronExpression();
+                        map.put("jobTime", cronExpression);
+                    }
+                    jobList.add(map);
+                }
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return state;
+        return jobList;
     }
 
     /**
-     * 是否存在任务
-     * 方法表述
-     * @param myJob
+     * 获取所有正在运行的job
+     *
      * @return
-     * boolean
      */
-    public  boolean hasTrigger(SysJob myJob){
-        boolean isHas = true;
+    public List<Map<String, Object>> queryRunJob() {
+        List<Map<String, Object>> jobList = null;
         try {
-            // 唯一主键
-            String jobName = myJob.getJobName();
-            String jobGroup = myJob.getJobGroup();
-            TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
-            Trigger trigger = scheduler.getTrigger(triggerKey);
-            if(null==trigger){
-                log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>method:removeJob trigger is NULL ");
-                isHas = false;
+            List<JobExecutionContext> executingJobs = scheduler.getCurrentlyExecutingJobs();
+            jobList = new ArrayList<Map<String, Object>>(executingJobs.size());
+            for (JobExecutionContext executingJob : executingJobs) {
+                Map<String, Object> map = new HashMap<String, Object>();
+                JobDetail jobDetail = executingJob.getJobDetail();
+                JobKey jobKey = jobDetail.getKey();
+                Trigger trigger = executingJob.getTrigger();
+                map.put("jobName", jobKey.getName());
+                map.put("jobGroupName", jobKey.getGroup());
+                map.put("description", "触发器:" + trigger.getKey());
+                Trigger.TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
+                map.put("jobStatus", triggerState.name());
+                if (trigger instanceof CronTrigger) {
+                    CronTrigger cronTrigger = (CronTrigger) trigger;
+                    String cronExpression = cronTrigger.getCronExpression();
+                    map.put("jobTime", cronExpression);
+                }
+                jobList.add(map);
             }
-        } catch (SchedulerException e) {
-            isHas = false;
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return isHas;
+        return jobList;
     }
-
     /**
      * @Description:启动所有定时任务
      *
@@ -231,7 +223,7 @@ public class QuartzManager {
      * @Description:关闭所有定时任务
      *
      */
-    public  void shutdownJobs() {
+    public  void stopJobs() {
         try {
             if (!scheduler.isShutdown()) {
                 scheduler.shutdown();

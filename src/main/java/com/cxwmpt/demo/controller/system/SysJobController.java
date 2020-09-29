@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -97,22 +98,36 @@ public class SysJobController {
     public ResultMessage save(SysJob sysJob) {
         //获取登录人信息
         SysUser loginUser = (SysUser) getSubject().getPrincipal();
-
+        //查询有没有重复的字段
+        QueryWrapper<SysJob> wrapper = new QueryWrapper<>();
+        wrapper.eq("job_name", sysJob.getJobName());
+        wrapper.eq("del_flag", false);
+        int count = sysJobService.count(wrapper);
         //添加新用户验证loginID是否相同
         if (StringUtils.isNotBlank(sysJob.getId())) {
+            //原数据库数据
+            SysJob old = sysJobService.getById(sysJob.getId());
+            if (!sysJob.getJobName().equals(old.getJobName())) {
+                if (count != 0) {
+                    return ResultMessage.error(-1, "对不起，你修改的名称重复，请重新创建");
+                }
+            }
             //修改
             sysJob.setUpdateId(loginUser.getId());
             if (sysJobService.updateById(sysJob)) {
-                quartzManager.modifyJobTime(sysJob, sysJob.getCronExpression());
+                quartzManager.updateJob(sysJob);
                 return ResultMessage.success();
             }
             return ResultMessage.error(ResultCodeEnum.UPDATE_DATE_ERROR);
         } else {
-
+            //新增
+            if (count != 0) {
+                return ResultMessage.error(-1, "对不起，你创建的编号重复，请重新创建");
+            }
             sysJob.setCreateId(loginUser.getId());
             if(sysJobService.save(sysJob)){
-                try {
-                    quartzManager.addJob(sysJob,Class.forName(sysJob.getJobClass()));
+               try {
+                   quartzManager.addJob(Class.forName(sysJob.getJobClass()),sysJob,new HashMap<>());
                 } catch (ClassNotFoundException e) {
                     return    ResultMessage.error(ResultCodeEnum.ADD_DATE_ERROR);
                 }
@@ -136,7 +151,7 @@ public class SysJobController {
         for (String data : ids) {
             SysJob sysJob = sysJobService.getById(data);
             sysJobService.removeById(sysJob.getId());
-            quartzManager.removeJob(sysJob);
+             quartzManager.deleteJob(sysJob);
         }
         return ResultMessage.success();
     }
@@ -155,7 +170,7 @@ public class SysJobController {
             SysJob sysJob = sysJobService.getById(data);
             sysJob.setJobStatus("0");
             sysJobService.updateById(sysJob);
-            quartzManager.resOneJob(sysJob);
+            quartzManager.restartJob(sysJob);
         }
         return ResultMessage.success();
     }
@@ -176,7 +191,7 @@ public class SysJobController {
             SysJob sysJob = sysJobService.getById(data);
             sysJob.setJobStatus("1");
             sysJobService.updateById(sysJob);
-            quartzManager.pasueOneJob(sysJob);
+             quartzManager.stopJob(sysJob);
         }
         return ResultMessage.success();
     }
@@ -201,8 +216,7 @@ public class SysJobController {
     @ResponseBody
     public ResultMessage stopAll(){
 
-        quartzManager.shutdownJobs();
-
+        quartzManager.stopJobs();
         return ResultMessage.success();
     }
 
