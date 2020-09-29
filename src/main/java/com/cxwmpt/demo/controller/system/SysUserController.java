@@ -65,7 +65,7 @@ public class SysUserController {
      * 新增索引页面
      * @return
      */
-    @RequestMapping("/html/user/addPage")
+    @RequestMapping("/html/system/user/addPage")
     public String addPage() {
         return "systemSetup/userCenter/user/Add";
     }
@@ -75,7 +75,7 @@ public class SysUserController {
      * @param model
      * @return
      */
-    @RequestMapping("/html/user/UpdatePasswordPage")
+    @RequestMapping("/html/system/user/UpdatePasswordPage")
     public String updatePassWordPage(Model model) {
         return "systemSetup/userCenter/user/UpdatePasswordPage";
     }
@@ -84,7 +84,7 @@ public class SysUserController {
     /**
      * TbAdmin加载新增form页面
      */
-    @RequestMapping("/html/user/updatePage")
+    @RequestMapping("/html/system/user/updatePage")
 
     public String updatePage(Model model, String id, String action) {
         model.addAttribute("action", action);

@@ -1,24 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.springframework.org/schema/jdbc">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>Index</title>
-    <link rel="stylesheet" th:href="@{/layui_ext/dtree/dtree.css}">
-    <link rel="stylesheet" th:href="@{/layui_ext/dtree/font/dtreefont.css}">
-    <link rel="stylesheet" th:href="@{/css/wangEditor-fullscreen-plugin.css}">
     <script th:src="@{/js/apiUrl.js}"></script>
     <script th:src="@{/js/jquery/jquery.min.js}"></script>
     <script th:src="@{/js/methodHelper.js}"></script>
     <script th:src="@{/js/common/layuiAdmin.js}"></script>
-    <script th:src="@{/js/wangEditor.js}"></script>
-    <script th:src="@{/js/wangEditor-fullscreen-plugin.js}"></script>
-
-    <style type="text/css">
-        img:not([src]) {
-            opacity: 0;
-        }
-
-    </style>
+    <script th:src="@{/js/common/layuiDtree.js}"></script>
 
 </head>
 <body>
@@ -79,24 +69,15 @@
 <script th:inline="javascript">
     layui.use(["form", 'layer', 'laydate', 'upload'], function () {
         const form = layui.form,
-            laydate = layui.laydate,
-            upload = layui.upload,
-            E = window.wangEditor,
             layer = layui.layer;
+
 
         //监听保存按钮
         form.on('submit(btnSubmit)', function (data) {
 
             let loadIndex = layer.load(2);
-
-            let ajaxrequire = {
-                _urls: apiUrl.job.addJob,
-                _method: 'post',
-                _dataType: 'json',
-                _data: data.field
-            };
-            $createAjax(ajaxrequire, function (res) {
-                if (res.code === 0) {
+            $.post(apiUrl.job.save, data.field, function (res) {
+                if (res.code === 200) {
                     //获取当前页面关闭，关闭form弹框
                     let index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
                     parent.layer.close(index); //再执行本页面关闭
@@ -107,16 +88,9 @@
                     });
                 }
             });
-            //取消提交按钮事件
             return false;
         });
     });
-
-    $(function() {
-
-    })
-
-
 
 </script>
 

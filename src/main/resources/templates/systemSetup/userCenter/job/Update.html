@@ -1,24 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.springframework.org/schema/jdbc">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>Index</title>
-    <link rel="stylesheet" th:href="@{/layui_ext/dtree/dtree.css}">
-    <link rel="stylesheet" th:href="@{/layui_ext/dtree/font/dtreefont.css}">
-    <link rel="stylesheet" th:href="@{/css/wangEditor-fullscreen-plugin.css}">
     <script th:src="@{/js/apiUrl.js}"></script>
     <script th:src="@{/js/jquery/jquery.min.js}"></script>
     <script th:src="@{/js/methodHelper.js}"></script>
     <script th:src="@{/js/common/layuiAdmin.js}"></script>
-    <script th:src="@{/js/wangEditor.js}"></script>
-    <script th:src="@{/js/wangEditor-fullscreen-plugin.js}"></script>
-
-    <style type="text/css">
-        img:not([src]) {
-            opacity: 0;
-        }
-
-    </style>
+    <script th:src="@{/js/common/layuiDtree.js}"></script>
 
 </head>
 <body>

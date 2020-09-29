@@ -89,7 +89,6 @@
             form.render(); //更新全部
         //监听保存按钮
         form.on('submit(btnSubmit)', function (data) {
-            debugger
             let loadIndex = layer.load(2);
             $.post(apiUrl.dictComment.save, data.field, function (res) {
                 if (res.code === 200) {

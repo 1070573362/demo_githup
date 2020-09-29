@@ -2,6 +2,7 @@ package com.cxwmpt.demo.model.system;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cxwmpt.demo.annotation.SysDict;
 import com.cxwmpt.demo.model.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -31,6 +32,7 @@ public class SysJob extends BaseEntity implements Serializable {
     private String cronExpression;
 
     @TableField(value = "job_status")
+    @SysDict(dictCode = "jobStatus")
     private String jobStatus;
 
     @TableField(value = "job_class")

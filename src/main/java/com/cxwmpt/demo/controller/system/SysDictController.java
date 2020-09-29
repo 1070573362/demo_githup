@@ -43,7 +43,7 @@ public class SysDictController {
      * 字典列表页面
      * @return
      */
-    @RequestMapping("/html/dict/page")
+    @RequestMapping("/html/system/dict/page")
     public String page() {
         return "systemSetup/userCenter/dict/Page";
     }
@@ -52,7 +52,7 @@ public class SysDictController {
      * 新增页面
      * @return
      */
-    @RequestMapping("/html/dict/addPage")
+    @RequestMapping("/html/system/dict/addPage")
     public String addPage() {
         return "systemSetup/userCenter/dict/Add";
     }
@@ -64,7 +64,7 @@ public class SysDictController {
      * @param action
      * @return
      */
-    @RequestMapping("/html/dict/updatePage")
+    @RequestMapping("/html/system/dict/updatePage")
     @SysLog("打开菜单管理的新增或修改窗口")
     public String updatePage(Model model, String id, String action) {
         model.addAttribute("action", action);

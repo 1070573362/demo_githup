@@ -40,6 +40,18 @@
                                 <i class='layui-icon layui-icon-delete'></i>删除
                             </button>
                         </shiro:hasPermission>
+                        <shiro:hasPermission name="sys:job:stop">
+                            <button permission="sys:user:delete" class="layui-btn layui-btn-sm layui-btn-danger"
+                                    lay-event="stop">
+                                <i class='layui-icon layui-icon-pause'></i>暂停
+                            </button>
+                        </shiro:hasPermission>
+                        <shiro:hasPermission name="sys:job:restart">
+                            <button permission="sys:user:delete" class="layui-btn layui-btn-sm layui-btn-warm"
+                                    lay-event="restart">
+                                <i class='layui-icon layui-icon-play'></i>重启
+                            </button>
+                        </shiro:hasPermission>
                         <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="details">
                             <i class='layui-icon layui-icon-read'></i>详情
                         </button>
@@ -122,7 +134,7 @@
                 id: 'dataList',//数据表格的id
                 toolbar: '#addBar',//头部操作栏id
                 size: 0,//表格大小
-                url: apiUrl.job.datalist,
+                url: apiUrl.job.pageList,
                 method: 'post',
                 page: true, //开启分页
                 limits: [10, 20, 30],
@@ -130,7 +142,7 @@
                 height: 'full-75', //高度最大化减去差值
                 where: data,
                 parseData: function (res) {
-                    //console.log(res)
+                   // console.log(res)
                     //res 即为原始返回的数据
                     return {
                         "code": 0, //解析接口状态
@@ -147,27 +159,7 @@
                         {field: 'jobGroup', title: '触发器组名', minWidth: 120},
                         {field: 'cronExpression', title: 'cron表达式', minWidth: 120},
                         {field: 'jobClass', title: '执行类', minWidth: 250},
-                        {field: 'jobStatus', title: '任务状态', minWidth: 80,
-                            templet: function (res) {
-                                if (res.jobStatus == "0") {
-                                    return "执行中";
-                                } else if (res.jobStatus == "1") {
-                                    return "已暂停";
-                                } else {
-                                    return "未知";
-                                }
-                            }
-                        },
-                        {
-                            title: '操作', width: 220, fixed: 'right', align: 'center', templet: function () {
-                                let result = "";
-                                result += "<a permission='sys:job:update' class='layui-btn layui-btn-normal layui-btn-xs' lay-event='edit'><i class='layui-icon layui-icon-edit'></i>修改</a>";
-                                result += "<a permission='sys:job:stop' class='layui-btn layui-btn-danger layui-btn-xs' lay-event='stop'><i class='layui-icon layui-icon-pause'></i>暂停</a>";
-                                result += "<a permission='sys:job:restart' class='layui-btn layui-btn-warm layui-btn-xs' lay-event='restart'><i class='layui-icon layui-icon-play'></i>重启</a>";
-                                // result += "<a class='layui-btn layui-btn-warm layui-btn-xs' lay-event='detail'><i class='layui-icon layui-icon-read'></i>详情</a>";
-                                return result;
-                            }
-                        } //绑定tpl表达式
+                        {field: 'jobStatusText', title: '任务状态', minWidth: 80},
                     ]
                 ]
             });
@@ -206,6 +198,32 @@
                         },
                     });
                     break;
+                case 'edit'://修改
+                    if (data.length === 0) {
+                        layer.alert('必须选择一条数据', {icon: 2});
+                    } else if (data.length > 1) {
+                        layer.alert('只能选择一条数据进行编辑', {icon: 2});
+                    } else {
+                        arr[0] = data[0].id;
+                        layer.open({
+                            type: 2,
+                            title: '修改信息',
+                            content: apiUrl.job.updatePage + '?action=edit&id=' + arr[0],
+                            area: ['100%', '100%'],
+                            // , offset: '10px'
+                            closeBtn: 1,//不显示则closeBtn: 0
+                            shade: [0.9, '#393D49'],
+                            // , shadeClose: true//点击弹层外区域关闭弹框
+                            // time: 300000 ,//默认关闭毫秒数
+                            //anim: 2  ,//弹出动画
+                            // , maxmin: true//最大小化按钮
+                            fix: false,//固定在可视区域
+                            end: function () {//销毁此页面回调
+                                reloadTable(null);
+                            },
+                        });
+                    }
+                    break;
                 case 'del'://删除
                     if (data.length === 0) {
                         layer.msg("对不起，您没有选择数据，请勾选数据", {icon: 5});
@@ -215,16 +233,10 @@
                         {
                             arr[i] = data[i].id;
                         }
-                        layer.confirm('您确定要删除吗？', function (index) {
+                        layer.confirm('您确定要删除条菜单包括他的子菜单吗？', function (index) {
                             let loadIndex = layer.load(2);
-                            let ajaxrequire = {
-                                _urls: apiUrl.job.delete,
-                                _method: 'post',
-                                _data: {ids: arr},
-                                _dataType: 'json'
-                            };
-                            $createAjax(ajaxrequire, function (res) {
-                                if (res.code === 0) {
+                            $.post(apiUrl.job.deletes, {ids: arr}, function (res) {
+                                if (res.code === 200) {
                                     layer.msg("操作成功", {icon: 6});
                                     layer.close(loadIndex);
                                     reloadTable();
@@ -236,141 +248,63 @@
                         });
                     }
                     break;
+                case 'stop'://暂停
+
+                        if (data.length === 0) {
+                            layer.msg("对不起，您没有选择数据，请勾选数据", {icon: 5});
+
+                        } else {
+                            for (let i = 0; i < data.length; i++) //删除数据得到合同编号
+                            {
+                                arr[i] = data[i].id;
+                            }
+                            layer.confirm('您确定要暂停吗？', function (index) {
+                                let loadIndex = layer.load(2);
+                                $.post(apiUrl.job.stops, {ids: arr}, function (res) {
+                                    if (res.code === 200) {
+                                        layer.msg("操作成功", {icon: 6});
+                                        layer.close(loadIndex);
+                                        reloadTable();
+                                    } else {
+                                        layer.msg(res.message, {icon: 5});
+                                        layer.close(loadIndex);
+                                    }
+                                });
+                            });
+                            reloadTable(null);
+                        }
+                    break;
+                case 'restart'://重启
+                        if (data.length === 0) {
+                            layer.msg("对不起，您没有选择数据，请勾选数据", {icon: 5});
+
+                        } else {
+                            for (let i = 0; i < data.length; i++) //删除数据得到合同编号
+                            {
+                                arr[i] = data[i].id;
+                            }
+                            layer.confirm('您确定要重启吗？', function (index) {
+                                let loadIndex = layer.load(2);
+                                $.post(apiUrl.job.restarts, {ids: arr}, function (res) {
+                                    if (res.code === 200) {
+                                        layer.msg("操作成功", {icon: 6});
+                                        layer.close(loadIndex);
+                                        reloadTable();
+                                    } else {
+                                        layer.msg(res.message, {icon: 5});
+                                        layer.close(loadIndex);
+                                    }
+                                });
+                            });
+                        }
+                    break;
                 case 'refresh'://刷新
                     reloadTable(null);
                     break;
                 default:
             }
         });
-
-        //监听操作工具栏
-        table.on('tool(dataTable)', function (obj) {
-            if (obj.event === 'edit') {
-                layer.open({
-                    type: 2,
-                    title: '修改定时任务信息',
-                    content: apiUrl.job.updatePage + '?action=edit&id=' + obj.data.id,
-                    area: ['950px', '550px'],
-                    skin: 'layui-layer-molv',
-                    // , offset: '10px'
-                    closeBtn: 1,//不显示则closeBtn: 0
-                    shade: [0.9, '#393D49'],
-                    // , shadeClose: true//点击弹层外区域关闭弹框
-                    // time: 300000 ,//默认关闭毫秒数
-                    //anim: 2  ,//弹出动画
-                    // , maxmin: true//最大小化按钮
-                    fix: false,//固定在可视区域
-                    end: function () {//销毁此页面回调
-                        reloadTable(null);
-                    },
-                });
-            }
-            //修改
-            else if (obj.event === 'detail') {
-                layer.open({
-                    type: 2,
-                    title: '定时任务详情',
-                    content: apiUrl.job.updatePage + '?action=detail&id=' + obj.data.id,
-                    area: ['950px', '550px'],
-                    skin: 'layui-layer-molv',
-                    // , offset: '10px'
-                    closeBtn: 1,//不显示则closeBtn: 0
-                    shade: [0.9, '#393D49'],
-                    // , shadeClose: true//点击弹层外区域关闭弹框
-                    // time: 300000 ,//默认关闭毫秒数
-                    //anim: 2  ,//弹出动画
-                    // , maxmin: true//最大小化按钮
-                    fix: false,//固定在可视区域
-                    end: function () {//销毁此页面回调
-                        reloadTable(null);
-                    },
-                });
-            }
-            //暂停
-            else if (obj.event === 'stop') {
-                debugger
-                layer.confirm('您确定要暂停吗？', {
-                    btn: ['确定','取消'] //按钮
-                }, function(){
-                    let ajaxrequire = {
-                        _urls: apiUrl.job.stop,
-                        _method: 'post',
-                        _dataType: 'json',
-                        _data: {
-                            "jobName":obj.data.jobName,
-                            "jobGroup":obj.data.jobGroup,
-                            "cronExpression":obj.data.cronExpression,
-                            "jobClass":obj.data.jobClass
-                        }
-                    };
-                    $createAjax(ajaxrequire, function (res) {
-                        if(res.code == 0){
-                            parent.layer.msg("成功!",{time:1500},function(){
-                                //刷页面
-                                location.reload();
-                            });
-                        }else{
-                            layer.msg(res.message);
-                        }
-                    });
-                }, function(){
-
-                });
-            }
-            //重启
-            else if (obj.event === 'restart') {
-                layer.confirm('您确定要重启吗？', {
-                    btn: ['确定','取消'] //按钮
-                }, function(){
-                    let ajaxrequire = {
-                        _urls: apiUrl.job.restart,
-                        _method: 'post',
-                        _dataType: 'json',
-                        _data: {
-                            "jobName":obj.data.jobName,
-                            "jobGroup":obj.data.jobGroup,
-                            "cronExpression":obj.data.cronExpression,
-                            "jobClass":obj.data.jobClass
-                        }
-                    };
-                    $createAjax(ajaxrequire, function (res) {
-                        if(res.code == 0){
-                            parent.layer.msg("成功!",{time:1500},function(){
-                                //刷页面
-                                location.reload();
-                            });
-                        }else{
-                            layer.msg(res.message);
-                        }
-                    });
-                }, function(){
-
-                });
-            }
-        });
-
     });
-
-    $(function() {
-        selectCarouselType();
-        function selectCarouselType() {
-            let ajaxrequire = {
-                _urls: apiUrl.base.selectDictByType,
-                _method: 'post',
-                _data: {dictType: "carousel_type"},
-                _dataType: 'json'
-            };
-            $createAjax(ajaxrequire, function (res) {
-                let html = "<option value= '" + "" + "'>" + "全部" + "</option>";
-                let data = res.data;
-                for (let i = 0; i < data.length; i++) {
-                    html += "<option value= '" + data[i].dictCode + "'>" + data[i].dictValue + "</option>";
-                }
-                $("#carouselType").html('').append(html);
-            })
-        }
-    })
-
 </script>
 </body>
 </html>

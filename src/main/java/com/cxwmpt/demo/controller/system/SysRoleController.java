@@ -52,11 +52,11 @@ public class SysRoleController {
     public String page() {
         return "systemSetup/userCenter/role/Page";
     }
-    @RequestMapping("html/role/addPage")
+    @RequestMapping("html/system/role/addPage")
     public String addPage() {
         return "systemSetup/userCenter/role/Add";
     }
-    @RequestMapping("html/role/updatePage")
+    @RequestMapping("html/system/role/updatePage")
     public String updatePage(Model model, String id, String action)
     { model.addAttribute("action", action);
         String authorityTree = "";

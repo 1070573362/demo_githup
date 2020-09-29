@@ -52,7 +52,7 @@ public class SysMenuController {
     }
 
 
-    @RequestMapping("/html/menu/addPage")
+    @RequestMapping("/html/system/menu/addPage")
     public String addPage(Model model,String parentId) {
         SysMenu sysMenu =new SysMenu();
         sysMenu.setParentId(parentId);
@@ -61,7 +61,7 @@ public class SysMenuController {
     }
 
 
-    @RequestMapping("/html/menu/updatePage")
+    @RequestMapping("/html/system/menu/updatePage")
     @SysLog("打开菜单管理的新增或修改窗口")
     public String updatePage(Model model, String id, String action) {
         model.addAttribute("action", action);

@@ -106,7 +106,6 @@ public class QuartzManager {
 //				return;
 //			}
             scheduler.rescheduleJob(triggerKey, trigger);
-
 //			Thread.sleep(TimeUnit.MINUTES.toMillis(10));
         } catch (Exception e) {
             throw new RuntimeException(e);

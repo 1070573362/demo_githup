@@ -17,7 +17,7 @@ public class SysdDuidController {
      * druid 数据监控页面
      * @return
      */
-    @RequestMapping(value = "/html/system/druid")
+    @RequestMapping(value = "/html/system/druid/page")
     @SysLog("打开用户管理窗口")
     public String druid() {
         return "systemSetup/userCenter/druid/index";

@@ -1,54 +1,71 @@
 package com.cxwmpt.demo.controller.system;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cxwmpt.demo.annotation.SysLog;
+import com.cxwmpt.demo.common.result.ResultCodeEnum;
 import com.cxwmpt.demo.common.result.ResultMessage;
+import com.cxwmpt.demo.model.system.SysDict;
+import com.cxwmpt.demo.model.system.SysDictComment;
 import com.cxwmpt.demo.model.system.SysJob;
+import com.cxwmpt.demo.model.system.SysUser;
 import com.cxwmpt.demo.quartzJob.QuartzManager;
 import com.cxwmpt.demo.service.api.system.SysJobService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.shiro.SecurityUtils.getSubject;
 
 
 @Controller
 public class SysJobController {
 
     @Autowired
-    private SysJobService jobService;
+    private SysJobService sysJobService;
 
     @Autowired
     private QuartzManager quartzManager;
 
-    @GetMapping("html/job/Page")
+    @RequestMapping("/html/system/job/page")
     public String page() {
         return "systemSetup/userCenter/job/Page";
     }
 
-    @GetMapping("html/job/AddPage")
-    public String add() {
-        return "system/job/Add";
+    /**
+     * 新增页面
+     * @return
+     */
+    @RequestMapping("/html/system/job/addPage")
+    public String addPage() {
+        return "systemSetup/userCenter/job/Add";
     }
 
-    @GetMapping("html/job/UpdatePage")
-    public String update(Model model, String id, String action) {
-        if (id != null) {
-            SysJob job = jobService.getById(id);
-            model.addAttribute("job", job);
-        }
-
+    /**
+     * 修改页面
+     * @param model
+     * @param id
+     * @param action
+     * @return
+     */
+    @RequestMapping("/html/system/job/updatePage")
+    @SysLog("打开菜单管理的新增或修改窗口")
+    public String updatePage(Model model, String id, String action) {
         model.addAttribute("action", action);
-        return "system/job/Update";
+        if (StringUtils.isNotBlank(id)) {
+            SysJob sysJob = sysJobService.getById(id);
+            model.addAttribute("entity", sysJob);
+        }
+        return "systemSetup/userCenter/job/Update";
     }
+
 
     /**
      * 查询任务列表
@@ -59,56 +76,50 @@ public class SysJobController {
     @ResponseBody
     public ResultMessage pageList(@RequestParam Map<String, Object> map) {
 
-        PageHelper.startPage(Integer.parseInt(map.get("page").toString()),Integer.parseInt(map.get("limit").toString()));
-        
-
-        List<SysJob> list = jobService.AllList(map);
-
+        if (map.containsKey("page") && map.containsKey("limit")) {
+            PageHelper.startPage(Integer.parseInt(map.get("page").toString()),Integer.parseInt(map.get("limit").toString()));
+        }
+        List<SysJob> list = sysJobService.AllList(map);
         PageInfo<SysJob> info = new PageInfo<>(list);
 
         return ResultMessage.success(info.getList(), (int)info.getTotal());
     }
 
     /**
-     * 新增一个任务
-     * @param job
+     * 新增和修改
+     * @param
      * @return
      */
-    @PostMapping("api/auth/system/job/add")
+
+    @RequestMapping("/api/auth/job/save")
     @ResponseBody
-    public ResultMessage addJob(SysJob job){
+    @SysLog("保存菜单信息")
+    public ResultMessage save(SysJob sysJob) {
+        //获取登录人信息
+        SysUser loginUser = (SysUser) getSubject().getPrincipal();
 
-        try {
-            job.setJobStatus("0");
-            jobService.save(job);
+        //添加新用户验证loginID是否相同
+        if (StringUtils.isNotBlank(sysJob.getId())) {
+            //修改
+            sysJob.setUpdateId(loginUser.getId());
+            if (sysJobService.updateById(sysJob)) {
+                quartzManager.modifyJobTime(sysJob, sysJob.getCronExpression());
+                return ResultMessage.success();
+            }
+            return ResultMessage.error(ResultCodeEnum.UPDATE_DATE_ERROR);
+        } else {
 
-            quartzManager.addJob(job,Class.forName(job.getJobClass()));
-
-        } catch (ClassNotFoundException e) {
-
-
-
+            sysJob.setCreateId(loginUser.getId());
+            if(sysJobService.save(sysJob)){
+                try {
+                    quartzManager.addJob(sysJob,Class.forName(sysJob.getJobClass()));
+                } catch (ClassNotFoundException e) {
+                    return    ResultMessage.error(ResultCodeEnum.ADD_DATE_ERROR);
+                }
+                return ResultMessage.success();
+            }
+            return  ResultMessage.error(ResultCodeEnum.ADD_DATE_ERROR);
         }
-
-        return ResultMessage.success();
-    }
-
-    /**
-     * 暂停一个任务
-     * @param job
-     * @return
-     */
-    @PostMapping("api/auth/system/job/pasueOneJob")
-    @ResponseBody
-    public ResultMessage edJob(SysJob job){
-
-        job.setJobStatus("1");
-
-        jobService.updateById(job);
-
-        quartzManager.pasueOneJob(job);
-
-        return ResultMessage.success();
     }
 
     /**
@@ -116,58 +127,64 @@ public class SysJobController {
      * @param ids
      * @return
      */
-    @PostMapping("api/auth/system/job/delete")
+    @PostMapping("/api/auth/job/deletes")
     @ResponseBody
-    public ResultMessage removeJob(@RequestParam("ids[]") List<String> ids){
-
-        ids.stream().forEach((id)->{
-            SysJob job = jobService.getById(id);
-            jobService.removeById(job.getId());
-            quartzManager.removeJob(job);
-        });
-
+    public ResultMessage deletes(@RequestParam("ids[]") List<String> ids){
+        if (ids.size() <= 0) {
+            return ResultMessage.error(ResultCodeEnum.OPERATION_DATA_IS_NULL);
+        }
+        for (String data : ids) {
+            SysJob sysJob = sysJobService.getById(data);
+            sysJobService.removeById(sysJob.getId());
+            quartzManager.removeJob(sysJob);
+        }
         return ResultMessage.success();
     }
-
-    /**
-     * 修改一个任务的cron表达式
-     * @param job
-     * @return
-     */
-    @PostMapping("api/auth/system/job/update")
-    @ResponseBody
-    public ResultMessage modifyJobTime(SysJob job){
-
-        jobService.updateById(job);
-
-        quartzManager.modifyJobTime(job, job.getCronExpression());
-
-        return ResultMessage.success();
-    }
-
     /**
      * 重启一个任务
-     * @param job
+     * @param
      * @return
      */
-    @PostMapping("api/auth/system/job/resOneJob")
+    @PostMapping("/api/auth/job/restarts")
     @ResponseBody
-    public ResultMessage resOneJob(SysJob job){
-
-        job.setJobStatus("0");
-
-        jobService.updateById(job);
-
-        quartzManager.resOneJob(job);
-
+    public ResultMessage restarts(@RequestParam("ids[]") List<String> ids){
+        if (ids.size() <= 0) {
+            return ResultMessage.error(ResultCodeEnum.OPERATION_DATA_IS_NULL);
+        }
+        for (String data : ids) {
+            SysJob sysJob = sysJobService.getById(data);
+            sysJob.setJobStatus("0");
+            sysJobService.updateById(sysJob);
+            quartzManager.resOneJob(sysJob);
+        }
         return ResultMessage.success();
     }
 
+
+    /**
+     * 暂停一个任务
+     * @param
+     * @return
+     */
+    @PostMapping("/api/auth/job/stops")
+    @ResponseBody
+    public ResultMessage stops(@RequestParam("ids[]") List<String> ids){
+        if (ids.size() <= 0) {
+            return ResultMessage.error(ResultCodeEnum.OPERATION_DATA_IS_NULL);
+        }
+        for (String data : ids) {
+            SysJob sysJob = sysJobService.getById(data);
+            sysJob.setJobStatus("1");
+            sysJobService.updateById(sysJob);
+            quartzManager.pasueOneJob(sysJob);
+        }
+        return ResultMessage.success();
+    }
     /**
      * 启动所有定时任务
      * @return
      */
-    @PostMapping("api/auth/system/job/startAll")
+    @PostMapping("/api/auth/job/startAll")
     @ResponseBody
     public ResultMessage startAll(){
 
@@ -180,7 +197,7 @@ public class SysJobController {
      * 关闭所有定时任务
      * @return
      */
-    @PostMapping("api/auth/system/job/stopAll")
+    @PostMapping("/api/auth/job/stopAll")
     @ResponseBody
     public ResultMessage stopAll(){
 

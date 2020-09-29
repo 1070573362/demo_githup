@@ -54,7 +54,7 @@ public class SysDictAspect {
     /**
      * 字典后缀
      */
-    private static final String DICT_TEXT_SUFFIX = "ShowText";
+    private static final String DICT_TEXT_SUFFIX = "Text";
 
 
     /**

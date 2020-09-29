@@ -18,8 +18,8 @@ const apiUrl = {
 
     },
     user: {
-        addPage: API_BASE_URL + '/html/user/addPage', //跳转新增页面
-        updatePage: API_BASE_URL + '/html/user/updatePage', //跳转修改页面
+        addPage: API_BASE_URL + '/html/system/user/addPage', //跳转新增页面
+        updatePage: API_BASE_URL + '/html/system/user/updatePage', //跳转修改页面
         pageList: API_BASE_URL + '/api/auth/user/pageList',//分页显示和查询
         AllList: API_BASE_URL + '/api/auth/user/AllList',//显示和查询
         deletes: API_BASE_URL + '/api/auth/user/deletes',//批量删除
@@ -28,8 +28,8 @@ const apiUrl = {
 
     },
     role: {
-        addPage: API_BASE_URL + '/html/role/addPage',//新增页面
-        updatePage: API_BASE_URL + '/html/role/updatePage',//修改页面
+        addPage: API_BASE_URL + '/html/system/role/addPage',//新增页面
+        updatePage: API_BASE_URL + '/html/system/role/updatePage',//修改页面
         listRole: API_BASE_URL + '/api/auth/role/listRole',      //下拉列表获取当前公司启用状态的角色
         pageList: API_BASE_URL + '/api/auth/role/pageList',//分页显示和查询
         AllList: API_BASE_URL + '/api/auth/role/AllList',//显示和查询
@@ -39,9 +39,9 @@ const apiUrl = {
 
     },
     menu: {
-        iconList: API_BASE_URL + '/html/menu/icon',//跳转图标页面
-        addPage: API_BASE_URL + '/html/menu/addPage',//新增页面
-        updatePage: API_BASE_URL + '/html/menu/updatePage',//修改页面
+        iconList: API_BASE_URL + '/html/system/menu/icon',//跳转图标页面
+        addPage: API_BASE_URL + '/html/system/menu/addPage',//新增页面
+        updatePage: API_BASE_URL + '/html/system/menu/updatePage',//修改页面
 
         listTreeTable: API_BASE_URL + '/api/auth/menu/listTreeTable',//显示tree数据表格
         save: API_BASE_URL + '/api/auth/menu/save',//新增和修改
@@ -56,8 +56,8 @@ const apiUrl = {
     },
     company: {
         datalist: API_BASE_URL + '/api/auth/sys/company/list', //查询所有部门
-        addPage: API_BASE_URL + '/html/company/AddPage', //跳转新增页面
-        updatePage: API_BASE_URL + '/html/company/UpdatePage', //跳转修改页面
+        addPage: API_BASE_URL + '/html/system/company/AddPage', //跳转新增页面
+        updatePage: API_BASE_URL + '/html/system/company/UpdatePage', //跳转修改页面
         addcompany: API_BASE_URL + '/api/auth/sys/company/addcompany', //新增部门
         updatecompany: API_BASE_URL + '/api/auth/sys/company/Updatecompany', //修改部门
         delete: API_BASE_URL + '/api/auth/sys/company/delete',//删除和批量删除
@@ -70,31 +70,34 @@ const apiUrl = {
         deletes: API_BASE_URL + '/api/auth/log/deletes', //删除日志
     },
     dict: {
-        addPage: API_BASE_URL + '/html/dict/addPage',//新增页面
-        updatePage: API_BASE_URL + '/html/dict/updatePage',//修改页面
+        addPage: API_BASE_URL + '/html/system/dict/addPage',//新增页面
+        updatePage: API_BASE_URL + '/html/system/dict/updatePage',//修改页面
         pageList: API_BASE_URL + '/api/auth/dict/pageList',//分页显示和查询
         save: API_BASE_URL + '/api/auth/dict/save', //新增和修改字典
         deletes: API_BASE_URL + '/api/auth/dict/deletes',//批量删除
     },
     dictComment: {
-        addPage: API_BASE_URL + '/html/dictComment/addPage',//新增页面
-        updatePage: API_BASE_URL + '/html/dictComment/updatePage',//修改页面
+        addPage: API_BASE_URL + '/html/system/dictComment/addPage',//新增页面
+        updatePage: API_BASE_URL + '/html/system/dictComment/updatePage',//修改页面
         pageList: API_BASE_URL + '/api/auth/dictComment/pageList',//分页显示和查询
         save: API_BASE_URL + '/api/auth/dictComment/save', //新增和修改字典
         deletes: API_BASE_URL + '/api/auth/dictComment/deletes',//批量删除
     },
     //定时任务
     job: {
+
+        addPage: API_BASE_URL + '/html/system/job/addPage', //跳转新增页面
+        updatePage: API_BASE_URL + '/html/system/job/updatePage', //跳转修改详情页面
+
         pageList: API_BASE_URL + '/api/auth/job/pageList', //查询定时任务列表
-        addPage: API_BASE_URL + '/html/job/AddPage', //跳转新增页面
         addJob: API_BASE_URL + '/api/auth/system/job/add', //新增定时任务
-        delete: API_BASE_URL + '/api/auth/system/job/delete', //删除定时任务
-        updatePage: API_BASE_URL + '/html/job/UpdatePage', //跳转修改详情页面
+        deletes: API_BASE_URL + '/api/auth/job/deletes', //删除定时任务
+        save: API_BASE_URL + '/api/auth/job/save', //保存定时任务
+
         updateJob: API_BASE_URL + '/api/auth/system/job/update',//修改定时任务信息
-        stop: API_BASE_URL + '/api/auth/system/job/pasueOneJob',//暂停一个任务
-        restart: API_BASE_URL + '/api/auth/system/job/resOneJob',//重启一个任务
-        stopAll: API_BASE_URL + '/api/auth/system/job/stopAll',//关闭所有定时任务
-        startAll: API_BASE_URL + '/api/auth/system/job/startAll',//启动所有定时任务
+        stops: API_BASE_URL + '/api/auth/job/stops',//暂停一个任务
+        restarts: API_BASE_URL + '/api/auth/job/restarts',//重启一个任务
+
     },
     photo: {
         UploadImage: API_BASE_URL + '/PhotoUpload/UploadImage',

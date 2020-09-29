@@ -33,7 +33,7 @@ public class SysLogController {
      * 日志列表页面
      * @return
      */
-    @GetMapping("/html/syslog/page")
+    @GetMapping("/html/system/syslog/page")
     public String page() {
         return "systemSetup/userCenter/log/Page";
     }

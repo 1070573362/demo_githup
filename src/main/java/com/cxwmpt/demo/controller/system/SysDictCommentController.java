@@ -40,7 +40,7 @@ public class SysDictCommentController {
      * 新增页面
      * @return
      */
-    @RequestMapping("/html/dictComment/addPage")
+    @RequestMapping("/html/system/dictComment/addPage")
     public String addPage(Model model, String selectDictId) {
         SysDict sysDict = sysDictService.getById(selectDictId);
         SysDictComment sysDictComment=new SysDictComment();
@@ -56,7 +56,7 @@ public class SysDictCommentController {
      * @param action
      * @return
      */
-    @RequestMapping("/html/dictComment/updatePage")
+    @RequestMapping("/html/system/dictComment/updatePage")
     @SysLog("打开菜单管理的新增或修改窗口")
     public String updatePage(Model model, String id, String action) {
         model.addAttribute("action", action);
