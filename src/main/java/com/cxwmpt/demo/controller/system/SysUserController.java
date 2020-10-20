@@ -66,26 +66,25 @@ public class SysUserController {
      * @return
      */
     @RequestMapping("/html/system/user/addPage")
+    @SysLog("打开新增用户管理窗口")
     public String addPage() {
         return "systemSetup/userCenter/user/Add";
     }
-
     /**
      * 修改密码
      * @param model
      * @return
      */
+    @SysLog("打开修改用户密码窗口")
     @RequestMapping("/html/system/user/UpdatePasswordPage")
     public String updatePassWordPage(Model model) {
         return "systemSetup/userCenter/user/UpdatePasswordPage";
     }
-
-
     /**
      * TbAdmin加载新增form页面
      */
     @RequestMapping("/html/system/user/updatePage")
-
+    @SysLog("打开编辑用户管理窗口")
     public String updatePage(Model model, String id, String action) {
         model.addAttribute("action", action);
         String userRoleIds = "";
@@ -110,7 +109,7 @@ public class SysUserController {
 
 
     /**
-     * 查询与显示权限信息
+     *
      *
      * @param map
      * @return
@@ -218,7 +217,7 @@ public class SysUserController {
      */
     @RequestMapping("/api/auth/user/saveNewPassword")
     @ResponseBody
-    @SysLog("密码重置")
+    @SysLog("保存新密码")
     public ResultMessage saveNewPassword(String oldPassword, String newPassword){
         //获取登录人信息
         SysUser loginUser = (SysUser) getSubject().getPrincipal();

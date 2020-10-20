@@ -1,7 +1,6 @@
 package com.cxwmpt.demo.controller;
 
 
-
 import com.cxwmpt.demo.annotation.SysLog;
 import com.cxwmpt.demo.common.result.ResultMessage;
 import com.cxwmpt.demo.common.util.AesUtil;
@@ -42,6 +41,7 @@ public class AccountController {
 
     /**
      * 跳转到登录页
+     *
      * @return
      */
     @GetMapping("/login")
@@ -52,7 +52,7 @@ public class AccountController {
     @GetMapping("/index")
     public String index() {
         SysUser loginUser = (SysUser) getSubject().getPrincipal();
-        if(loginUser==null){
+        if (loginUser == null) {
             return "login";
         }
         return "index";
@@ -69,48 +69,47 @@ public class AccountController {
         Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(name, MD5Util.md5(pswd));
         //这边还接收吗异常吗 不用了
-            //主体提交登录请求到SecurityManager
+        //主体提交登录请求到SecurityManager
         subject.login(token);
 
         return ResultMessage.success();
     }
+
     /**
      * 获取当前登录人信息
+     *
      * @param
      * @return
      */
     @RequestMapping("/api/auth/account/getLoginInfo")
     @ResponseBody
+    @SysLog("获取当前登录人的信息")
     public ResultMessage getLoginInfo() {
         SysUser loginUser = (SysUser) getSubject().getPrincipal();
         return ResultMessage.success(loginUser);
     }
+
     /**
      * 退出
      *
      * @return BJR without data
      */
     @RequestMapping("/api/auth/account/_logout")
-   @ResponseBody
-    public  ResultMessage _logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @ResponseBody
+    @SysLog("用户登出")
+    public ResultMessage _logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Subject subject = getSubject();
         subject.logout(); // session 会销毁，在SessionListener监听session销毁，清理权限缓存
         return ResultMessage.success();
     }
-    @RequestMapping("/html/account/home")
-    public String home(Model model) {
-            SysUser loginUser = (SysUser) getSubject().getPrincipal();
 
+    @RequestMapping("/html/account/home")
+    @SysLog("获取当前登录人的信息")
+    public String home(Model model) {
+        SysUser loginUser = (SysUser) getSubject().getPrincipal();
         return "home";
     }
-    /**
-     * 忘记密码
-     * @param model
-     * @return
-     */
-    @RequestMapping("/html/ForgetPassword")
-    public String ForgetPassword(Model model) {
-        return "html/ForgetPassword";
-    }
+
+
 
 }
