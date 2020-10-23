@@ -31,31 +31,38 @@ import java.util.Map;
 
 import static org.apache.shiro.SecurityUtils.getSubject;
 
+/**
+ * @author Administrator
+ */
 @Controller
 public class SysRoleController {
-    @Autowired
-    private SysRoleService sysRoleService;
-    @Autowired
-    private SysRoleMenuService sysRoleMenuService;
-    @Autowired
-    private SysUserRoleService sysUserRoleService;
-    @Autowired
-    private RedisTemplate redisTemplate;
+    private final SysRoleService sysRoleService;
+    private final SysRoleMenuService sysRoleMenuService;
+
+    public SysRoleController(SysRoleService sysRoleService, SysRoleMenuService sysRoleMenuService) {
+        this.sysRoleService = sysRoleService;
+        this.sysRoleMenuService = sysRoleMenuService;
+    }
+
 
     /**
      * 菜单栏页面
      *
      * @return
      */
-    @RequestMapping("html/system/role/page")
     @SysLog("打开角色管理窗口")
+    @RequestMapping("html/system/role/page")
     public String page() {
         return "systemSetup/userCenter/role/Page";
     }
+
+    @SysLog("打开新增角色管理窗口")
     @RequestMapping("html/system/role/addPage")
     public String addPage() {
         return "systemSetup/userCenter/role/Add";
     }
+
+    @SysLog("打开编辑角色管理窗口")
     @RequestMapping("html/system/role/updatePage")
     public String updatePage(Model model, String id, String action)
     { model.addAttribute("action", action);
@@ -79,17 +86,15 @@ public class SysRoleController {
         return "systemSetup/userCenter/role/Update";
     }
 
-
-
     /**
      * 查询与显示权限信息
      *
      * @param map
      * @return
      */
+    @SysLog("查询角色管理的信息")
     @RequestMapping("/api/auth/role/pageList")
     @ResponseBody
-    @SysLog("分页查询角色管理的信息")
     public ResultMessage pageList(@RequestParam Map map) {
         if (map.containsKey("page") && map.containsKey("limit")) {
             PageHelper.startPage(Integer.parseInt(map.get("page").toString()), Integer.parseInt(map.get("limit").toString()));
@@ -99,19 +104,18 @@ public class SysRoleController {
         PageInfo<SysRole> info = new PageInfo<>(list);
         return ResultMessage.success(info.getList(), (int) info.getTotal());
     }
+
+    @SysLog("查询角色管理的信息")
     @RequestMapping("/api/auth/role/AllList")
     @ResponseBody
-    @SysLog("查询角色管理的信息")
     public ResultMessage AllList(@RequestParam Map map) {
-        //判断是否有分页数据传过来
         List<SysRole> list = sysRoleService.AllList(map);
         return ResultMessage.success(list);
     }
 
-
+    @SysLog("删除角色信息")
     @RequestMapping("/api/auth/role/deletes")
     @ResponseBody
-    @SysLog("删除角色信息")
     public ResultMessage deletes(@RequestParam("ids[]") List<String> ids) {
         for (String data : ids) {
             sysRoleService.removeById(data);
@@ -124,10 +128,9 @@ public class SysRoleController {
     }
 
 
-
+    @SysLog("保存角色信息")
     @RequestMapping("/api/auth/role/save")
     @ResponseBody
-    @SysLog("保存角色信息")
     public ResultMessage save(@RequestParam("form") String form, @RequestParam("ArrayIds") String ArrayIds, HttpServletRequest request) {
         SysRole sysRole = JSONObject.parseObject(form, SysRole.class);
         List<String> array = JSONObject.parseArray(ArrayIds, String.class);

@@ -24,19 +24,24 @@ import java.util.Map;
 import static org.apache.shiro.SecurityUtils.getSubject;
 
 
+/**
+ * @author Administrator
+ */
 @Controller
 public class SysMenuController {
-    @Autowired
-    private SysMenuService sysMenuService;
+    private final SysMenuService sysMenuService;
+
+    public SysMenuController(SysMenuService sysMenuService) {
+        this.sysMenuService = sysMenuService;
+    }
 
     /**
      * 菜单栏页面
      *
      * @return
      */
-
-    @RequestMapping("html/system/menu/page")
     @SysLog("打开菜单管理窗口")
+    @RequestMapping("html/system/menu/page")
     public String page() {
         return "systemSetup/userCenter/menu/Page";
     }
@@ -45,13 +50,13 @@ public class SysMenuController {
      * 图标页
      * @return
      */
-    @GetMapping("html/menu/icon")
     @SysLog("打开图标窗口")
+    @GetMapping("html/menu/icon")
     public String icon() {
         return "systemSetup/userCenter/menu/icon";
     }
 
-
+    @SysLog("打开新增菜单管理窗口")
     @RequestMapping("/html/system/menu/addPage")
     public String addPage(Model model,String parentId) {
         SysMenu sysMenu =new SysMenu();
@@ -60,9 +65,8 @@ public class SysMenuController {
         return "systemSetup/userCenter/menu/Add";
     }
 
-
+    @SysLog("打开编辑菜单管理窗口")
     @RequestMapping("/html/system/menu/updatePage")
-    @SysLog("打开菜单管理的新增或修改窗口")
     public String updatePage(Model model, String id, String action) {
         model.addAttribute("action", action);
         if (StringUtils.isNotBlank(id)) {
@@ -76,6 +80,7 @@ public class SysMenuController {
     /**
      * 获取登录人要显示的菜单(只查询角色状态为0的角色)
      */
+    @SysLog("获取登录人要显示的菜单(只查询角色状态为0的角色)")
     @RequestMapping("/api/auth/menu/listLoginInfoMenu")
     @ResponseBody
     public ResultMessage listLoginInfoMenu() {
@@ -88,9 +93,9 @@ public class SysMenuController {
     /**
      * dTreeList的数据
      */
+    @SysLog("查询菜单信息")
     @RequestMapping("/api/auth/menu/getDTreeList")
     @ResponseBody
-    @SysLog("查询所有菜单信息")
     public  ResultMessage getDTreeList() {
         List<Map> list=sysMenuService.getDTreeList();
         return  ResultMessage.success("查询所有菜单信息",list);
@@ -100,11 +105,10 @@ public class SysMenuController {
      * 菜单列表treeTable数据
      * orderby
      */
+    @SysLog("查询所有菜单信息")
     @PostMapping("/api/auth/menu/listTreeTable")
     @ResponseBody
-    @SysLog("查询所有菜单信息")
     public ResultMessage listTreeTable() {
-
         List<SysMenu> list= sysMenuService.listTreeTable();
         return ResultMessage.success("查询所有菜单信息",list);
     }
@@ -113,6 +117,7 @@ public class SysMenuController {
      * 根据pid下面的所有子节点包含自己(菜单界面使用)
      * orderby
      */
+    @SysLog("根据pid下面的所有子节点包含自己(菜单界面使用)")
     @PostMapping("/api/auth/menu/getListById")
     @ResponseBody
     public ResultMessage getListByPid(@RequestParam Map map) {
@@ -128,9 +133,9 @@ public class SysMenuController {
      * @param id
      * @return
      */
+    @SysLog("删除菜单信息（包含子节点信息）")
     @RequestMapping("/api/auth/menu/delete")
     @ResponseBody
-    @SysLog("删除菜单信息")
     public ResultMessage delete(String id) {
         List<String> sysMentId=sysMenuService.getByIDSelectSubNode(id);
         if(!sysMenuService.removeById(id)){
@@ -146,9 +151,9 @@ public class SysMenuController {
      * @param ids
      * @return
      */
+    @SysLog("批量删除菜单信息（包含子节点信息）")
     @RequestMapping("/api/auth/menu/deletes")
     @ResponseBody
-    @SysLog("删除菜单信息")
     public ResultMessage delete(@RequestParam("ids[]") List<String> ids) {
         if (ids.size() <= 0) {
             return ResultMessage.error(ResultCodeEnum.OPERATION_DATA_IS_NULL);
@@ -167,10 +172,9 @@ public class SysMenuController {
      * @param sysMenu
      * @return
      */
-
+    @SysLog("保存菜单信息")
     @RequestMapping("/api/auth/menu/save")
     @ResponseBody
-    @SysLog("保存菜单信息")
     public ResultMessage save(SysMenu sysMenu) {
         //获取登录人信息
         SysUser loginUser = (SysUser) getSubject().getPrincipal();
@@ -206,9 +210,9 @@ public class SysMenuController {
      * @param parentId
      * @return
      */
+    @SysLog("根据菜单父节点查询菜单信息")
     @RequestMapping("/api/auth/menu/listFromPid")
     @ResponseBody
-    @SysLog("查询菜单父节点信息")
     public  ResultMessage listFromPid(@RequestParam("parentId") String parentId) {
         SysMenu sysMenu=sysMenuService.getById(parentId);
          if(sysMenu==null){

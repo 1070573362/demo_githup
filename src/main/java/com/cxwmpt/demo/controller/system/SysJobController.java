@@ -26,15 +26,21 @@ import java.util.Map;
 import static org.apache.shiro.SecurityUtils.getSubject;
 
 
+/**
+ * @author Administrator
+ */
 @Controller
 public class SysJobController {
 
-    @Autowired
-    private SysJobService sysJobService;
+    private final SysJobService sysJobService;
 
-    @Autowired
-    private QuartzManager quartzManager;
+    private final QuartzManager quartzManager;
 
+    public SysJobController(SysJobService sysJobService, QuartzManager quartzManager) {
+        this.sysJobService = sysJobService;
+        this.quartzManager = quartzManager;
+    }
+    @SysLog("打开定时器任务管理窗口")
     @RequestMapping("/html/system/job/page")
     public String page() {
         return "systemSetup/userCenter/job/Page";
@@ -44,6 +50,7 @@ public class SysJobController {
      * 新增页面
      * @return
      */
+    @SysLog("打开新增定时器任务窗口")
     @RequestMapping("/html/system/job/addPage")
     public String addPage() {
         return "systemSetup/userCenter/job/Add";
@@ -56,8 +63,8 @@ public class SysJobController {
      * @param action
      * @return
      */
+    @SysLog("打开编辑定时器任务窗口")
     @RequestMapping("/html/system/job/updatePage")
-    @SysLog("打开菜单管理的新增或修改窗口")
     public String updatePage(Model model, String id, String action) {
         model.addAttribute("action", action);
         if (StringUtils.isNotBlank(id)) {
@@ -73,6 +80,7 @@ public class SysJobController {
      * @param map
      * @return
      */
+    @SysLog("分页查询定时器任务信息")
     @PostMapping("/api/auth/job/pageList")
     @ResponseBody
     public ResultMessage pageList(@RequestParam Map<String, Object> map) {
@@ -94,7 +102,7 @@ public class SysJobController {
 
     @RequestMapping("/api/auth/job/save")
     @ResponseBody
-    @SysLog("保存菜单信息")
+    @SysLog("保存1定时器任务信息")
     public ResultMessage save(SysJob sysJob) {
         //获取登录人信息
         SysUser loginUser = (SysUser) getSubject().getPrincipal();
@@ -142,6 +150,7 @@ public class SysJobController {
      * @param ids
      * @return
      */
+    @SysLog("删除定时器任务信息")
     @PostMapping("/api/auth/job/deletes")
     @ResponseBody
     public ResultMessage deletes(@RequestParam("ids[]") List<String> ids){
@@ -160,6 +169,7 @@ public class SysJobController {
      * @param
      * @return
      */
+    @SysLog("重启定时器任务")
     @PostMapping("/api/auth/job/restarts")
     @ResponseBody
     public ResultMessage restarts(@RequestParam("ids[]") List<String> ids){
@@ -181,6 +191,7 @@ public class SysJobController {
      * @param
      * @return
      */
+    @SysLog("暂停定时器任务")
     @PostMapping("/api/auth/job/stops")
     @ResponseBody
     public ResultMessage stops(@RequestParam("ids[]") List<String> ids){
@@ -199,6 +210,7 @@ public class SysJobController {
      * 启动所有定时任务
      * @return
      */
+    @SysLog("启动所有定时任务")
     @PostMapping("/api/auth/job/startAll")
     @ResponseBody
     public ResultMessage startAll(){
@@ -212,6 +224,7 @@ public class SysJobController {
      * 关闭所有定时任务
      * @return
      */
+    @SysLog("关闭所有定时任务")
     @PostMapping("/api/auth/job/stopAll")
     @ResponseBody
     public ResultMessage stopAll(){

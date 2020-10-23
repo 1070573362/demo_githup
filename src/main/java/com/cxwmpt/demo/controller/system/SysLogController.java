@@ -26,23 +26,28 @@ import java.util.Map;
 @Controller
 public class SysLogController {
 
-    @Autowired
-    private SysLogService sysLogService;
+    private final SysLogService sysLogService;
+
+    public SysLogController(SysLogService sysLogService) {
+        this.sysLogService = sysLogService;
+    }
 
     /**
      * 日志列表页面
      * @return
      */
+    @com.cxwmpt.demo.annotation.SysLog("打开日志管理窗口")
     @GetMapping("/html/system/syslog/page")
     public String page() {
         return "systemSetup/userCenter/log/Page";
     }
 
     /**
-     * 查询部门列表
+     *
      * @param params
      * @return
      */
+    @com.cxwmpt.demo.annotation.SysLog("分页查询日志管理信息")
     @PostMapping("/api/auth/log/pageList")
     @ResponseBody
     public ResultMessage selectData(@RequestParam Map<String, Object> params) {
@@ -67,6 +72,7 @@ public class SysLogController {
      * @param ids
      * @return
      */
+    @com.cxwmpt.demo.annotation.SysLog("删除日志信息")
     @PostMapping("/api/auth/log/deletes")
     @ResponseBody
     public ResultMessage deletes(@RequestParam("ids[]") List<String> ids) {

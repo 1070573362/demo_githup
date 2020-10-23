@@ -38,25 +38,29 @@ import java.util.Set;
 
 import static org.apache.shiro.SecurityUtils.getSubject;
 
+/**
+ * @author Administrator
+ */
 @Controller
 public class SysUserController {
 
-    @Autowired
-    private SysUserService sysUserService;
+    private final SysUserService sysUserService;
 
-    @Autowired
-    private SysUserRoleService sysUserRoleService;
+    private final SysUserRoleService sysUserRoleService;
 
-    @Autowired
-    private RedisTemplate redisTemplate;
+    public SysUserController(SysUserRoleService sysUserRoleService, SysUserService sysUserService) {
+        this.sysUserRoleService = sysUserRoleService;
+        this.sysUserService = sysUserService;
+    }
+
 
     /**
      * 页面
      *
      * @return
      */
-    @RequestMapping("/html/system/user/page")
     @SysLog("打开用户管理窗口")
+    @RequestMapping("/html/system/user/page")
     public String page() {
         return "systemSetup/userCenter/user/Page";
     }
@@ -65,8 +69,8 @@ public class SysUserController {
      * 新增索引页面
      * @return
      */
-    @RequestMapping("/html/system/user/addPage")
     @SysLog("打开新增用户管理窗口")
+    @RequestMapping("/html/system/user/addPage")
     public String addPage() {
         return "systemSetup/userCenter/user/Add";
     }
@@ -83,8 +87,8 @@ public class SysUserController {
     /**
      * TbAdmin加载新增form页面
      */
-    @RequestMapping("/html/system/user/updatePage")
     @SysLog("打开编辑用户管理窗口")
+    @RequestMapping("/html/system/user/updatePage")
     public String updatePage(Model model, String id, String action) {
         model.addAttribute("action", action);
         String userRoleIds = "";
@@ -114,9 +118,9 @@ public class SysUserController {
      * @param map
      * @return
      */
+    @SysLog("分页查询用户管理信息")
     @RequestMapping("/api/auth/user/pageList")
     @ResponseBody
-    @SysLog("分页查询用户管理信息")
     public ResultMessage pageList(@RequestParam Map map) {
         if (map.containsKey("page") && map.containsKey("limit")) {
             PageHelper.startPage(Integer.parseInt(map.get("page").toString()), Integer.parseInt(map.get("limit").toString()));
@@ -128,10 +132,9 @@ public class SysUserController {
     }
 
 
-
+    @SysLog("删除用户信息")
     @RequestMapping("/api/auth/user/deletes")
     @ResponseBody
-    @SysLog("删除用户信息")
     public ResultMessage deletes(@RequestParam("ids[]") List<String> ids) {
         for (String data : ids) {
             sysUserService.removeById(data);
@@ -143,10 +146,9 @@ public class SysUserController {
         return ResultMessage.success("删除数据成功");
     }
 
-
+    @SysLog("保存用户信息")
     @RequestMapping("/api/auth/user/save")
     @ResponseBody
-    @SysLog("保存用户信息")
     public ResultMessage save(@RequestParam("form") String form, @RequestParam("ArrayIds") String ArrayIds) {
         SysUser sysUser = JSONObject.parseObject(form, SysUser.class);
         List<String> array = JSONObject.parseArray(ArrayIds, String.class);
@@ -215,9 +217,9 @@ public class SysUserController {
      * 保存新密码
      * @return
      */
+    @SysLog("保存新密码")
     @RequestMapping("/api/auth/user/saveNewPassword")
     @ResponseBody
-    @SysLog("保存新密码")
     public ResultMessage saveNewPassword(String oldPassword, String newPassword){
         //获取登录人信息
         SysUser loginUser = (SysUser) getSubject().getPrincipal();
@@ -240,5 +242,4 @@ public class SysUserController {
         }
         return ResultMessage.error(ResultCodeEnum.UPDATE_PASSWORD_ERROR);
     }
-
 }

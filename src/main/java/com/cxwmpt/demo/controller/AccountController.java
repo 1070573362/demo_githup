@@ -44,11 +44,12 @@ public class AccountController {
      *
      * @return
      */
+    @SysLog("进入登录界面")
     @GetMapping("/login")
     public String login() {
         return "login";
     }
-
+    @SysLog("进入主界面")
     @GetMapping("/index")
     public String index() {
         SysUser loginUser = (SysUser) getSubject().getPrincipal();
@@ -57,11 +58,9 @@ public class AccountController {
         }
         return "index";
     }
-
-
+    @SysLog("用户登录")
     @PostMapping("/api/auth/account/_login")
     @ResponseBody
-    @SysLog("用户登录")
     public ResultMessage _login(String userName, String password, boolean remember) throws UnsupportedEncodingException {
 
         String name = aesDecrypt(userName);
@@ -81,9 +80,9 @@ public class AccountController {
      * @param
      * @return
      */
+    @SysLog("获取当前登录人的信息")
     @RequestMapping("/api/auth/account/getLoginInfo")
     @ResponseBody
-    @SysLog("获取当前登录人的信息")
     public ResultMessage getLoginInfo() {
         SysUser loginUser = (SysUser) getSubject().getPrincipal();
         return ResultMessage.success(loginUser);
@@ -94,17 +93,16 @@ public class AccountController {
      *
      * @return BJR without data
      */
+    @SysLog("用户登出")
     @RequestMapping("/api/auth/account/_logout")
     @ResponseBody
-    @SysLog("用户登出")
     public ResultMessage _logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Subject subject = getSubject();
         subject.logout(); // session 会销毁，在SessionListener监听session销毁，清理权限缓存
         return ResultMessage.success();
     }
-
-    @RequestMapping("/html/account/home")
     @SysLog("获取当前登录人的信息")
+    @RequestMapping("/html/account/home")
     public String home(Model model) {
         SysUser loginUser = (SysUser) getSubject().getPrincipal();
         return "home";
