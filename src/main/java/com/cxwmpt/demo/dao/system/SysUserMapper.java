@@ -12,14 +12,24 @@ import java.util.Map;
 
 /**
 * Created by Mybatis Generator 2020/04/07
-*/
+ * @author Administrator
+ */
 @Repository
 public interface SysUserMapper extends BaseMapper<SysUser> {
 
 
-    SysUser selectUserByEntity(@Param("loginUser") SysUser loginUser);
+    /**
+     * 根据登录人获取当前所有用户信息和权限信息
+     * @param loginUser
+     * @return
+     */
+    SysUser getPermissionsInfoByUserInfo(@Param("loginUser") SysUser loginUser);
 
 
-
-    List<SysUser> AllList(@Param("map") Map map);
+    /**
+     * 获取所有数据
+     * @param map
+     * @return
+     */
+    List<SysUser> getAllList(@Param("map") Map map);
 }

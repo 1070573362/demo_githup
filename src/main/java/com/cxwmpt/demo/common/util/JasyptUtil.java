@@ -13,7 +13,7 @@ import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig;
  * @Descripition : Jasypt安全框架加密类工具包
  */
 
-public class JasyptUtils {
+public class JasyptUtil {
 
 
     /**

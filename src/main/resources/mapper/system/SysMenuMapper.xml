@@ -31,24 +31,17 @@
      '0'    as `checkArr`,
      ''      as `iconClass`
   </sql>
-    <sql id="listLoginInfoMenu_columns">
+    <sql id="getListByLoginInfo_columns">
      id          as `id`,
      parent_id     as `parentId`,
      menu_name      as `menuName`,
      menu_code      as `menuCode`,
      icon      as `icon`,
      href      as `href`,
-     type      as `type`,
-     permission   as `permission`,
-     icon      as `iconClass`
+     `type`      as `type`,
+     permission   as `permission`
   </sql>
-    <select id="listTreeTable" resultMap="BaseResultMap">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM sys_menu where del_flag=false
-        order by sort asc ,create_date desc
 
-    </select>
     <select id="getDTreeList" resultType="java.util.Map">
         SELECT
         <include refid="dTree_columns"/>
@@ -69,9 +62,9 @@
 
 
 
-    <select id="listLoginInfoMenu" resultType="com.cxwmpt.demo.common.vo.Node">
+    <select id="getListByLoginInfo" resultType="com.cxwmpt.demo.common.vo.Node">
         SELECT
-        <include refid="listLoginInfoMenu_columns"/>
+        <include refid="getListByLoginInfo_columns"/>
         FROM sys_menu where id in(SELECT  sys_menu.id from(SELECT sys_role_menu.menu_id from (SELECT sys_user_role.role_id from (SELECT id FROM sys_user where id=#{id} and del_flag=false )sys_user
         LEFT JOIN (SELECT sys_user_role.* from sys_user_role right JOIN (SELECT * from sys_role where  status="0" and   del_flag=false )sys_role on sys_role.id=sys_user_role.role_id   where    sys_user_role.del_flag=false )sys_user_role  on sys_user_role.user_id= sys_user.id)sys
         LEFT JOIN (SELECT * FROM sys_role_menu where del_flag=false)sys_role_menu  on sys_role_menu.role_id=sys.role_id  group by sys_role_menu.menu_id)sys
@@ -80,12 +73,7 @@
         order by sort asc ,create_date desc
     </select>
 
-    <select id="ListPermissionFromUserId" resultType="java.lang.String">
-     SELECT  sys_menu.permission from(SELECT sys_role_menu.menu_id from (SELECT sys_user_role.role_id from (SELECT id FROM sys_user where id=#{id} and del_flag=false )sys_user
-     LEFT JOIN (SELECT * from sys_user_role where del_flag=false)sys_user_role  on sys_user_role.user_id= sys_user.id)sys
-     LEFT JOIN (SELECT * FROM sys_role_menu where del_flag=false)sys_role_menu  on sys_role_menu.role_id=sys.role_id  group by sys_role_menu.menu_id)sys
-     LEFT JOIN (select * FROM sys_menu where del_flag=false)sys_menu on sys_menu.id=sys.menu_id
-    </select>
+
     <select id="getListById" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>

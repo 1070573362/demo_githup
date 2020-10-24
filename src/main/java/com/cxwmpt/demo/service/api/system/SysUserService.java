@@ -9,17 +9,25 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by admin on 2020/4/7.
+ *
+ * @author admin
+ * @date 2020/4/7
  */
 public interface SysUserService extends IService<SysUser> {
 
 
-    List<SysUser> AllList(Map map);
-
     /**
-     * 查询用户信息和权限信息
-     * @param
+     * 查找所有数据
+     * @param map
      * @return
      */
-    SysUser selectUserByEntity(SysUser loginUser);
+    List<SysUser> getAllList(Map map);
+
+
+    /**
+     * 根据用户信息查找用户信息和权限信息
+     * @param loginUser
+     * @return
+     */
+    SysUser getPermissionsInfoByUserInfo(SysUser loginUser);
 }

@@ -2,7 +2,6 @@ package com.cxwmpt.demo.controller.system;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cxwmpt.demo.annotation.SysLog;
-import com.cxwmpt.demo.common.result.CodeEnum;
 import com.cxwmpt.demo.common.result.ResultCodeEnum;
 import com.cxwmpt.demo.common.result.ResultMessage;
 import com.cxwmpt.demo.model.system.*;
@@ -12,13 +11,10 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,16 +29,20 @@ import static org.apache.shiro.SecurityUtils.getSubject;
 @Controller
 public class SysDictController {
 
-    @Autowired
-    private SysDictService sysDictService;
+    private final SysDictService sysDictService;
 
-    @Autowired
-    private SysDictCommentService sysDictCommentService;
+    private final SysDictCommentService sysDictCommentService;
+
+    public SysDictController(SysDictService sysDictService, SysDictCommentService sysDictCommentService) {
+        this.sysDictService = sysDictService;
+        this.sysDictCommentService = sysDictCommentService;
+    }
 
     /**
      * 字典列表页面
      * @return
      */
+    @SysLog("打开字典管理窗口")
     @RequestMapping("/html/system/dict/page")
     public String page() {
         return "systemSetup/userCenter/dict/Page";
@@ -52,6 +52,7 @@ public class SysDictController {
      * 新增页面
      * @return
      */
+    @SysLog("打开新增字典管理窗口")
     @RequestMapping("/html/system/dict/addPage")
     public String addPage() {
         return "systemSetup/userCenter/dict/Add";
@@ -64,8 +65,8 @@ public class SysDictController {
      * @param action
      * @return
      */
+    @SysLog("打开编辑字典管理窗口")
     @RequestMapping("/html/system/dict/updatePage")
-    @SysLog("打开菜单管理的新增或修改窗口")
     public String updatePage(Model model, String id, String action) {
         model.addAttribute("action", action);
         if (StringUtils.isNotBlank(id)) {
@@ -81,6 +82,7 @@ public class SysDictController {
      * @param map
      * @return
      */
+    @SysLog("分页查询字典管理信息")
     @RequestMapping("/api/auth/dict/pageList")
     @ResponseBody
     public ResultMessage pageList(@RequestParam Map<String, Object> map) {
@@ -89,7 +91,7 @@ public class SysDictController {
             PageHelper.startPage(Integer.parseInt(map.get("page").toString()),Integer.parseInt(map.get("limit").toString()));
         }
 
-        List<SysDict> list = sysDictService.AllList(map);
+        List<SysDict> list = sysDictService.getAllList(map);
 
         PageInfo<SysDict> info = new PageInfo<>(list);
 
@@ -101,10 +103,9 @@ public class SysDictController {
      * @param sysDict
      * @return
      */
-
+    @SysLog("保存字典管理信息")
     @RequestMapping("/api/auth/dict/save")
     @ResponseBody
-    @SysLog("保存菜单信息")
     public ResultMessage save(SysDict sysDict) {
         //获取登录人信息
         SysUser loginUser = (SysUser) getSubject().getPrincipal();
@@ -140,12 +141,12 @@ public class SysDictController {
             return  ResultMessage.error(ResultCodeEnum.ADD_DATE_ERROR);
         }
     }
-
     /**
      * 删除数据字典
      * @param ids
      * @return
      */
+    @SysLog("删除数据字典")
     @RequestMapping("/api/auth/dict/deletes")
     @ResponseBody
     public ResultMessage deletes(@RequestParam("ids[]") List<String> ids) {
@@ -162,7 +163,5 @@ public class SysDictController {
         }
         return ResultMessage.success();
     }
-
-
 
 }

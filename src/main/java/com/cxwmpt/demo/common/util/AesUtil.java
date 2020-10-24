@@ -10,6 +10,7 @@ import java.math.BigInteger;
 
 /**
  * Aes接口数据加密
+ * @author Administrator
  */
 public class AesUtil {
     //密钥 (需要前端和后端保持一致)

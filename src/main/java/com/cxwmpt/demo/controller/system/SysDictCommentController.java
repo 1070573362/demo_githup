@@ -9,11 +9,9 @@ import com.cxwmpt.demo.model.system.SysDictComment;
 import com.cxwmpt.demo.model.system.SysUser;
 import com.cxwmpt.demo.service.api.system.SysDictCommentService;
 import com.cxwmpt.demo.service.api.system.SysDictService;
-import com.cxwmpt.demo.service.api.system.SysLogService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,15 +29,19 @@ import static org.apache.shiro.SecurityUtils.getSubject;
  **/
 @Controller
 public class SysDictCommentController {
-    @Autowired
-    private SysDictService sysDictService;
-    @Autowired
-    private SysDictCommentService sysDictCommentService;
+    private final SysDictService sysDictService;
+    private final SysDictCommentService sysDictCommentService;
+
+    public SysDictCommentController(SysDictService sysDictService, SysDictCommentService sysDictCommentService) {
+        this.sysDictService = sysDictService;
+        this.sysDictCommentService = sysDictCommentService;
+    }
 
     /**
      * 新增页面
      * @return
      */
+    @SysLog("打开新增字典详情窗口")
     @RequestMapping("/html/system/dictComment/addPage")
     public String addPage(Model model, String selectDictId) {
         SysDict sysDict = sysDictService.getById(selectDictId);
@@ -56,8 +58,8 @@ public class SysDictCommentController {
      * @param action
      * @return
      */
+    @SysLog("编辑新增字典详情窗口")
     @RequestMapping("/html/system/dictComment/updatePage")
-    @SysLog("打开菜单管理的新增或修改窗口")
     public String updatePage(Model model, String id, String action) {
         model.addAttribute("action", action);
         if (StringUtils.isNotBlank(id)) {
@@ -71,6 +73,7 @@ public class SysDictCommentController {
      * @param map
      * @return
      */
+    @SysLog("分页查询字典详情信息")
     @RequestMapping("/api/auth/dictComment/pageList")
     @ResponseBody
     public ResultMessage pageList(@RequestParam Map<String, Object> map) {
@@ -79,7 +82,7 @@ public class SysDictCommentController {
             PageHelper.startPage(Integer.parseInt(map.get("page").toString()),Integer.parseInt(map.get("limit").toString()));
         }
 
-            List<SysDictComment> list = sysDictCommentService.AllList(map);
+            List<SysDictComment> list = sysDictCommentService.getAllList(map);
             PageInfo<SysDictComment> info = new PageInfo<>(list);
             return ResultMessage.success(info.getList(), (int)info.getTotal());
     }
@@ -89,10 +92,9 @@ public class SysDictCommentController {
      * @param
      * @return
      */
-
+    @SysLog("保存字典详情信息")
     @RequestMapping("/api/auth/dictComment/save")
     @ResponseBody
-    @SysLog("保存信息")
     public ResultMessage save(SysDictComment sysDictComment) {
         //获取登录人信息
         SysUser loginUser = (SysUser) getSubject().getPrincipal();
@@ -134,6 +136,7 @@ public class SysDictCommentController {
      * @param ids
      * @return
      */
+    @SysLog("删除字典详情信息")
     @RequestMapping("/api/auth/dictComment/deletes")
     @ResponseBody
     public ResultMessage deletes(@RequestParam("ids[]") List<String> ids) {

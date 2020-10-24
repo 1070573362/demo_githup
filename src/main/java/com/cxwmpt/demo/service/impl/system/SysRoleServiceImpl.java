@@ -25,7 +25,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     @Autowired
     protected SysRoleMapper sysRoleMapper;
     @Override
-    public List<SysRole> AllList(Map map) {
-        return sysRoleMapper.AllList(map);
+    public List<SysRole> getAllList(Map map) {
+        return sysRoleMapper.getAllList(map);
     }
 }

@@ -21,5 +21,10 @@ import java.util.Map;
 public interface SysDictCommentService extends IService<SysDictComment> {
 
 
-    List<SysDictComment> AllList(Map<String, Object> map);
+    /**
+     * 获取所有数据
+     * @param map
+     * @return
+     */
+    List<SysDictComment> getAllList(Map<String, Object> map);
 }

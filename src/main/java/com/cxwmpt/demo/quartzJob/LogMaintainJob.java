@@ -10,7 +10,9 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 import java.util.Date;
 
 /**
- * Created by admin on 2020/8/17.
+ *
+ * @author admin
+ * @date 2020/8/17
  */
 public class LogMaintainJob extends QuartzJobBean {
 

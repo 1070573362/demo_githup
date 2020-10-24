@@ -7,6 +7,9 @@ import com.cxwmpt.demo.common.vo.Node;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Administrator
+ */
 public class TreeBuilder {
 
     private List<Node> nodes = new ArrayList<>();
@@ -14,21 +17,12 @@ public class TreeBuilder {
         super();
         this.nodes= nodes;
     }
-//    /**
-//     * 构建JSON树形结构
-//     * @return
-//     */
-//    public String buildJSONTree() {
-//        List<Node> nodeTree = buildTree();
-//        JSONArray  jsonArray = JSONArray.fromObject(nodeTree);
-//        return jsonArray.toString();
-//    }
+
 
     /**
-     * 构建树形结构
+     *
      * @return
      */
-
     public List<Node> buildTree() {
         List<Node> treeNodes = new ArrayList<Node>();
         List<Node> rootNodes = getRootNodes();
@@ -92,7 +86,6 @@ public class TreeBuilder {
      * @param
      * @return
      */
-
     public List<Node> getRootNodes() {
         List<Node> rootNodes = new ArrayList<Node>();
         for (Node n : nodes){

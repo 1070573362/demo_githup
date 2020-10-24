@@ -20,5 +20,10 @@ import java.util.Map;
 **/
 public interface SysDictService extends IService<SysDict> {
 
-    List<SysDict> AllList(Map map);
+    /**
+     * 获取所有数据
+     * @param map
+     * @return
+     */
+    List<SysDict> getAllList(Map map);
 }

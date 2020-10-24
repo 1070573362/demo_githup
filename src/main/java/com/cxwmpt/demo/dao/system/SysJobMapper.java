@@ -6,11 +6,20 @@ import com.cxwmpt.demo.model.system.SysDict;
 import com.cxwmpt.demo.model.system.SysJob;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
 
-@Mapper
+/**
+ * @author Administrator
+ */
+@Repository
 public interface SysJobMapper extends BaseMapper<SysJob> {
-    List<SysJob> AllList(@Param("map") Map map);
+    /**
+     * 获取所有数据
+     * @param map
+     * @return
+     */
+    List<SysJob> getAllList(@Param("map") Map map);
 }

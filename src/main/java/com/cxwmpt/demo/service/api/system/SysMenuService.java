@@ -20,15 +20,32 @@ import java.util.Map;
 **/
 public interface SysMenuService extends IService<SysMenu> {
 
-    List<SysMenu> listTreeTable();
 
+    /**
+     * layui 下拉树形数据
+     * @return
+     */
     List<Map> getDTreeList();
 
+    /**
+     * 根据id查询子节点所有id
+     * @param id
+     * @return
+     */
     List<String> getByIDSelectSubNode(String id);
 
-    List<Node> listLoginInfoMenu(String id);
+    /**
+     * 获取登录人拥有的菜单信息
+     * @param id
+     * @return
+     */
+    List<Node> getListByLoginInfo(String id);
 
-    List<String> ListPermissionFromUserId(String id);
 
+    /**
+     * 根据id查询出子节点和它本身
+     * @param map
+     * @return
+     */
     List<SysMenu> getListById(Map map);
 }

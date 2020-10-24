@@ -6,6 +6,8 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.regex.Pattern.*;
+
 /**
  * 2019-3-21  17:32 Create by Administrator
  * NumberUtil
@@ -29,7 +31,7 @@ public class NumberUtil {
 
     public static boolean isInteger(String input){
 
-        Matcher mer = Pattern.compile("^[+-]?[0-9]+$").matcher(input);
+        Matcher mer = compile("^[+-]?[0-9]+$").matcher(input);
 
         return mer.find();
 
@@ -49,7 +51,7 @@ public class NumberUtil {
 
     public static boolean isDouble(String input){
 
-        Matcher mer = Pattern.compile("^[+-]?[0-9.]+$").matcher(input);
+        Matcher mer = compile("^[+-]?[0-9.]+$").matcher(input);
 
         return mer.find();
 

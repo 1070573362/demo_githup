@@ -4,6 +4,9 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 
+/**
+ * @author Administrator
+ */
 public class EntityUtil {
     /**
      *
@@ -11,7 +14,7 @@ public class EntityUtil {
      * @param to 复制完后的实体类对象
      * @throws Exception
      */
-    public static void Copy(Object source, Object to) throws Exception {
+    public static void copy(Object source, Object to) throws Exception {
         // 获取属性
         BeanInfo sourceBean = Introspector.getBeanInfo(source.getClass(), Object.class);
         PropertyDescriptor[] sourceProperty = sourceBean.getPropertyDescriptors();

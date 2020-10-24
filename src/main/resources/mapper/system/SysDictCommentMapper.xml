@@ -19,7 +19,7 @@
     id, dict_code, code, `name`,sort,  remark, create_date, create_id, update_date, update_id, del_flag
   </sql>
 
-  <select id="AllList" resultMap="BaseResultMap">
+  <select id="getAllList" resultMap="BaseResultMap">
 
     select
     <include refid="Base_Column_List"/>

@@ -18,6 +18,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * 工具类
+ * @author Administrator
+ */
 public class ToolUtil {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(ToolUtil.class);

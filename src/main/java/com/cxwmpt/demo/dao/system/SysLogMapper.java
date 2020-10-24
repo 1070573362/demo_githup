@@ -6,15 +6,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cxwmpt.demo.model.system.SysLog;
 import org.apache.ibatis.annotations.Mapper;
 
+
 /**
-* @program: backend
-*
-* @description
-*
-* @author: YouName
-*
-* @create: 2020-04-03 10:15
-**/
+ * @author Administrator
+ */
 @Mapper
 public interface SysLogMapper extends BaseMapper<SysLog> {
 }

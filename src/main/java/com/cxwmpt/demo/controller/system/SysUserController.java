@@ -5,14 +5,10 @@ package com.cxwmpt.demo.controller.system;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
-import com.cxwmpt.demo.annotation.SysDict;
 import com.cxwmpt.demo.annotation.SysLog;
-import com.cxwmpt.demo.common.result.CodeEnum;
 import com.cxwmpt.demo.common.result.ResultCodeEnum;
 import com.cxwmpt.demo.common.result.ResultMessage;
 import com.cxwmpt.demo.common.util.MD5Util;
-import com.cxwmpt.demo.model.system.SysMenu;
-import com.cxwmpt.demo.model.system.SysRole;
 import com.cxwmpt.demo.model.system.SysUser;
 import com.cxwmpt.demo.model.system.SysUserRole;
 import com.cxwmpt.demo.service.api.system.SysUserRoleService;
@@ -21,20 +17,15 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.apache.shiro.SecurityUtils.getSubject;
 
@@ -126,7 +117,7 @@ public class SysUserController {
             PageHelper.startPage(Integer.parseInt(map.get("page").toString()), Integer.parseInt(map.get("limit").toString()));
         }
         //判断是否有分页数据传过来
-        List<SysUser> list = sysUserService.AllList(map);
+        List<SysUser> list = sysUserService.getAllList(map);
         PageInfo<SysUser> info = new PageInfo<>(list);
         return ResultMessage.success(info.getList(), (int) info.getTotal());
     }

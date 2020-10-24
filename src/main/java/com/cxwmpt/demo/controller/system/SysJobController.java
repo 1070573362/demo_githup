@@ -4,8 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cxwmpt.demo.annotation.SysLog;
 import com.cxwmpt.demo.common.result.ResultCodeEnum;
 import com.cxwmpt.demo.common.result.ResultMessage;
-import com.cxwmpt.demo.model.system.SysDict;
-import com.cxwmpt.demo.model.system.SysDictComment;
 import com.cxwmpt.demo.model.system.SysJob;
 import com.cxwmpt.demo.model.system.SysUser;
 import com.cxwmpt.demo.quartzJob.QuartzManager;
@@ -14,7 +12,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -88,7 +85,7 @@ public class SysJobController {
         if (map.containsKey("page") && map.containsKey("limit")) {
             PageHelper.startPage(Integer.parseInt(map.get("page").toString()),Integer.parseInt(map.get("limit").toString()));
         }
-        List<SysJob> list = sysJobService.AllList(map);
+        List<SysJob> list = sysJobService.getAllList(map);
         PageInfo<SysJob> info = new PageInfo<>(list);
 
         return ResultMessage.success(info.getList(), (int)info.getTotal());

@@ -5,6 +5,9 @@ import org.apache.shiro.session.SessionListener;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * @author Administrator
+ */
 public class ShiroSessionListener implements SessionListener {
     private final AtomicInteger sessionCount = new AtomicInteger(0);
 

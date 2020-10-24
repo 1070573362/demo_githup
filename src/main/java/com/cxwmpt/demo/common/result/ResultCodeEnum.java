@@ -1,5 +1,9 @@
 package com.cxwmpt.demo.common.result;
 
+/**
+ * @author Administrator
+ */
+
 public enum  ResultCodeEnum {
 
     /*** 通用部分 100 - 599***/
@@ -47,25 +51,17 @@ public enum  ResultCodeEnum {
     STATUS_ERROR(3002,"用户状态异常"),
 
     OLD_PASSWORD_NOT_NEW_PASSWORD(3003,"您的旧密码和新密码不相同"),
-
-
-
-    /*** 用户 2000-2999***/
-
-
-
-
     ;
 
 
     /**
      * 响应状态码
      */
-    private Integer  code;
+    private final Integer  code;
     /**
      * 响应信息
      */
-    private String message;
+    private final String message;
 
     ResultCodeEnum(Integer  code, String message) {
         this.code = code;
@@ -75,7 +71,6 @@ public enum  ResultCodeEnum {
     public Integer  getCode() {
         return code;
     }
-
     public String getMessage() {
         return message;
     }

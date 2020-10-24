@@ -4,7 +4,7 @@ $(function () {
         let layer = layui.layer
             , element = layui.element;
         let loadIndex = layer.load(2);
-        $.post(apiUrl.menu.listLoginInfoMenu, function(res){
+        $.post(apiUrl.menu.getListByLoginInfo, function(res){
             layer.close(loadIndex);
             if (res.code !== 200 && res.status === false) return;
                 $("#LAY-system-side-menu").append(Util.traverseLayuiMenuBar(res.data));

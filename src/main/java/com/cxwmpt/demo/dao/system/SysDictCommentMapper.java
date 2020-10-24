@@ -23,5 +23,11 @@ import java.util.Map;
 **/
 @Repository
 public interface SysDictCommentMapper extends BaseMapper<SysDictComment> {
-    List<SysDictComment> AllList(@Param("map") Map map);
+
+    /**
+     * 获取所有数据
+     * @param map
+     * @return
+     */
+    List<SysDictComment> getAllList(@Param("map") Map map);
 }

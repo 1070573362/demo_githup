@@ -72,7 +72,7 @@
     userNo, address, remark, create_date, create_id, update_date, update_id, del_flag
   </sql>
    <!-- parameterType="com.cxwmpt.demo.model.system.SysUser"-->
-  <select id="selectUserByEntity" resultMap="UserMap" >
+  <select id="getPermissionsInfoByUserInfo" resultMap="UserMap" >
         SELECT
         u.*,
         m.id 			AS 	"menu.id",
@@ -96,7 +96,7 @@
   </select>
 
 
-  <select id="AllList" resultMap="BaseResultMap">
+  <select id="getAllList" resultMap="BaseResultMap">
    select
    <include refid="Base_Column_List"/>
     from sys_user

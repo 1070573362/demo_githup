@@ -27,6 +27,9 @@ import java.util.*;
 
 import static org.apache.shiro.SecurityUtils.getSubject;
 
+/**
+ * @author Administrator
+ */
 @Slf4j
 public class CustomRealm extends AuthorizingRealm {
     @Autowired
@@ -112,7 +115,7 @@ public class CustomRealm extends AuthorizingRealm {
         //通过SimpleAuthenticationInfo做授权
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         //查询拥有的菜单权限角色权限
-        SysUser user = sysUserService.selectUserByEntity(loginUser);
+        SysUser user = sysUserService.getPermissionsInfoByUserInfo(loginUser);
         Set<SysRole>  roles = user.getRoleLists();
         Set<String> roleNames = new HashSet<String>();
         for (SysRole role : roles) {

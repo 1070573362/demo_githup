@@ -9,16 +9,12 @@ import com.cxwmpt.demo.common.result.ResultMessage;
 import com.cxwmpt.demo.model.system.SysRole;
 import com.cxwmpt.demo.model.system.SysRoleMenu;
 import com.cxwmpt.demo.model.system.SysUser;
-import com.cxwmpt.demo.model.system.SysUserRole;
 import com.cxwmpt.demo.service.api.system.SysRoleMenuService;
 import com.cxwmpt.demo.service.api.system.SysRoleService;
-import com.cxwmpt.demo.service.api.system.SysUserRoleService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -100,7 +96,7 @@ public class SysRoleController {
             PageHelper.startPage(Integer.parseInt(map.get("page").toString()), Integer.parseInt(map.get("limit").toString()));
         }
         //判断是否有分页数据传过来
-        List<SysRole> list = sysRoleService.AllList(map);
+        List<SysRole> list = sysRoleService.getAllList(map);
         PageInfo<SysRole> info = new PageInfo<>(list);
         return ResultMessage.success(info.getList(), (int) info.getTotal());
     }
@@ -109,7 +105,7 @@ public class SysRoleController {
     @RequestMapping("/api/auth/role/AllList")
     @ResponseBody
     public ResultMessage AllList(@RequestParam Map map) {
-        List<SysRole> list = sysRoleService.AllList(map);
+        List<SysRole> list = sysRoleService.getAllList(map);
         return ResultMessage.success(list);
     }
 

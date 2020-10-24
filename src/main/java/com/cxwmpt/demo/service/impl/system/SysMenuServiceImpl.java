@@ -8,7 +8,6 @@ import com.cxwmpt.demo.dao.system.SysMenuMapper;
 import com.cxwmpt.demo.model.system.SysMenu;
 import com.cxwmpt.demo.service.api.system.SysMenuService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,12 +24,12 @@ import java.util.Map;
 **/
 @Service
 public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> implements SysMenuService {
-    @Autowired
-    protected SysMenuMapper sysMenuMapper;
-    @Override
-    public List<SysMenu> listTreeTable() {
-        return sysMenuMapper.listTreeTable();
+    protected final SysMenuMapper sysMenuMapper;
+
+    public SysMenuServiceImpl(SysMenuMapper sysMenuMapper) {
+        this.sysMenuMapper = sysMenuMapper;
     }
+
 
     @Override
     public List<Map> getDTreeList() {
@@ -43,22 +42,14 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     }
 
     @Override
-    public List<Node> listLoginInfoMenu(String id) {
-        List<Node> listTreeTable =sysMenuMapper.listLoginInfoMenu(id);
+    public List<Node> getListByLoginInfo(String id) {
+        List<Node> listTreeTable =sysMenuMapper.getListByLoginInfo(id);
         //转换成子父节点
         TreeBuilder treeBuilder = new TreeBuilder(listTreeTable);
-       // tbMenuBarTree.buildListTree();
         return treeBuilder.buildTree();
     }
 
-    @Override
-    public List<String> ListPermissionFromUserId(String id) {
-        List<String> sysMenuList=sysMenuMapper.ListPermissionFromUserId(id);
-        if(sysMenuList.size()==1&&sysMenuList.get(0)==null){
-            return null;
-        }
-        return sysMenuList;
-    }
+
 
     @Override
     public List<SysMenu> getListById(Map map) {

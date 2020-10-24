@@ -10,26 +10,41 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Map;
 
+
 /**
-* @program: backend
-*
-* @description
-*
-* @author: YouName
-*
-* @create: 2020-04-08 17:02
-**/
+ * @author Administrator
+ */
 @Repository
 public interface SysMenuMapper extends BaseMapper<SysMenu> {
-    List<SysMenu> listTreeTable();
 
+
+    /**
+     * layui 下拉列表树的数据源
+     * @return
+     */
     List<Map>  getDTreeList();
 
+
+    /**
+     * 根据id查询子节点所有id
+     * @param id
+     * @return
+     */
     List<String> getByIDSelectSubNode(@Param("id") String id);
 
-    List<Node> listLoginInfoMenu(@Param("id") String id);
 
-    List<String> ListPermissionFromUserId(@Param("id") String id);
+    /**
+     * 获取登录人拥有权限的菜单信息
+     * @param id
+     * @return
+     */
+    List<Node> getListByLoginInfo(@Param("id") String id);
 
+
+    /**
+     * 根据id查询出子节点和它本身
+     * @param map
+     * @return
+     */
     List<SysMenu> getListById(@Param("map")Map map);
 }

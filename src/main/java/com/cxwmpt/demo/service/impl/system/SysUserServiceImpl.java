@@ -14,16 +14,20 @@ import java.util.Map;
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
-    @Autowired//一定要加注释
-    protected SysUserMapper sysUserMapper;
+    //一定要加注释
+    protected final SysUserMapper sysUserMapper;
 
-    @Override
-    public List<SysUser> AllList(Map map) {
-        return sysUserMapper.AllList(map);
+    public SysUserServiceImpl(SysUserMapper sysUserMapper) {
+        this.sysUserMapper = sysUserMapper;
     }
 
     @Override
-    public SysUser selectUserByEntity(SysUser loginUser) {
-        return sysUserMapper.selectUserByEntity(loginUser);
+    public List<SysUser> getAllList(Map map) {
+        return sysUserMapper.getAllList(map);
+    }
+
+    @Override
+    public SysUser getPermissionsInfoByUserInfo(SysUser loginUser) {
+        return sysUserMapper.getPermissionsInfoByUserInfo(loginUser);
     }
 }

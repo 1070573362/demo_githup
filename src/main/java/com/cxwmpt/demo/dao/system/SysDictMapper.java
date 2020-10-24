@@ -23,5 +23,10 @@ import java.util.Map;
 **/
 @Repository
 public interface SysDictMapper extends BaseMapper<SysDict> {
-    List<SysDict> AllList(@Param("map") Map map);
+    /**
+     * 获取所有数据
+     * @param map
+     * @return
+     */
+    List<SysDict> getAllList(@Param("map") Map map);
     }

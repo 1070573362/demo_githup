@@ -16,7 +16,7 @@
   <sql id="Base_Column_List">
     id, role_name, status as `status`, remark, create_date, create_id, update_date, update_id, del_flag
   </sql>
-    <select id="AllList" resultMap="BaseResultMap">
+    <select id="getAllList" resultMap="BaseResultMap">
       SELECT
       <include refid="Base_Column_List"/>
       FROM sys_role

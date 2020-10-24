@@ -21,5 +21,10 @@ import java.util.Map;
 @Repository
 public interface SysRoleMapper extends BaseMapper<SysRole> {
 
-    List<SysRole> AllList(@Param("map") Map map);
+    /**
+     * 查询所有数据
+     * @param map
+     * @return
+     */
+    List<SysRole> getAllList(@Param("map") Map map);
 }

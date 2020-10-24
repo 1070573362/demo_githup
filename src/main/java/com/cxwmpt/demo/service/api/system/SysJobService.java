@@ -8,8 +8,17 @@ import com.cxwmpt.demo.model.system.SysJob;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author Administrator
+ */
 public interface SysJobService extends IService<SysJob> {
 
-    List<SysJob> AllList(Map map);
+
+    /**
+     * 获取所有数据
+     * @param map
+     * @return
+     */
+    List<SysJob> getAllList(Map map);
 
 }

@@ -21,7 +21,7 @@
     id, job_name, job_group, cron_expression, job_status, job_class, create_date, create_id, update_date, update_id, del_flag
   </sql>
 
-  <select id="AllList" resultMap="BaseResultMap">
+  <select id="getAllList" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>
     from sys_job

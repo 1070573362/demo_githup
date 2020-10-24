@@ -20,7 +20,7 @@
   </sql>
 
 
-  <select id="AllList" resultMap="BaseResultMap">
+  <select id="getAllList" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>
     from sys_dict

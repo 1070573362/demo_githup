@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 
 /**
  * 获取请求的ip地址
+ * @author Administrator
  */
 
 public class IpUtil {

@@ -5,6 +5,7 @@ import lombok.Data;
 
 /**
  * 自定义api返回接口异常
+ * @author Administrator
  */
 @Data
 public class ApiException extends RuntimeException {

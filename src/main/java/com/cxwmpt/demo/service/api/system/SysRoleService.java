@@ -20,5 +20,10 @@ import java.util.Map;
 public interface SysRoleService extends IService<SysRole> {
 
 
-    List<SysRole> AllList(Map map);
+    /**
+     * 获取所有数据
+     * @param map
+     * @return
+     */
+    List<SysRole> getAllList(Map map);
 }

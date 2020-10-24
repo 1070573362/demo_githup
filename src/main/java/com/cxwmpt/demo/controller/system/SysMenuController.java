@@ -81,12 +81,12 @@ public class SysMenuController {
      * 获取登录人要显示的菜单(只查询角色状态为0的角色)
      */
     @SysLog("获取登录人要显示的菜单(只查询角色状态为0的角色)")
-    @RequestMapping("/api/auth/menu/listLoginInfoMenu")
+    @RequestMapping("/api/auth/menu/getListByLoginInfo")
     @ResponseBody
-    public ResultMessage listLoginInfoMenu() {
+    public ResultMessage getListByLoginInfo() {
         //获取登录人信息
         SysUser loginUser = (SysUser) getSubject().getPrincipal();
-        List<Node> sysMenuList=sysMenuService.listLoginInfoMenu(loginUser.getId());
+        List<Node> sysMenuList=sysMenuService.getListByLoginInfo(loginUser.getId());
         return  ResultMessage.success(sysMenuList);
     }
 
@@ -101,17 +101,6 @@ public class SysMenuController {
         return  ResultMessage.success("查询所有菜单信息",list);
     }
 
-    /**
-     * 菜单列表treeTable数据
-     * orderby
-     */
-    @SysLog("查询所有菜单信息")
-    @PostMapping("/api/auth/menu/listTreeTable")
-    @ResponseBody
-    public ResultMessage listTreeTable() {
-        List<SysMenu> list= sysMenuService.listTreeTable();
-        return ResultMessage.success("查询所有菜单信息",list);
-    }
 
     /**
      * 根据pid下面的所有子节点包含自己(菜单界面使用)

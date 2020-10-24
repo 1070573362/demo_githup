@@ -1,4 +1,4 @@
-//统一api接口
+listLoginInfoMenu//统一api接口
 const host = window.location.host;
 const API_BASE_URL = "http://" + host;
 const apiUrl = {
@@ -43,14 +43,12 @@ const apiUrl = {
         addPage: API_BASE_URL + '/html/system/menu/addPage',//新增页面
         updatePage: API_BASE_URL + '/html/system/menu/updatePage',//修改页面
 
-        listTreeTable: API_BASE_URL + '/api/auth/menu/listTreeTable',//显示tree数据表格
         save: API_BASE_URL + '/api/auth/menu/save',//新增和修改
         delete: API_BASE_URL + '/api/auth/menu/delete',//删除
         deletes: API_BASE_URL + '/api/auth/menu/deletes',//批量删除
         getDTreeList: API_BASE_URL + '/api/auth/menu/getDTreeList',//获取dtree需要的data数据
         listFromPid: API_BASE_URL + '/api/auth/menu/listFromPid',//根据pid对象查询，返回一个对象
-
-        listLoginInfoMenu: API_BASE_URL + '/api/auth/menu/listLoginInfoMenu',//显示登录人拥有的权限菜单
+        getListByLoginInfo: API_BASE_URL + '/api/auth/menu/getListByLoginInfo',//显示登录人拥有的权限菜单
         getListById: API_BASE_URL + '/api/auth/menu/getListById',//根据id获取所有子节点
 
     },
